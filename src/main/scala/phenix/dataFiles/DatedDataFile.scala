@@ -39,7 +39,7 @@ abstract class DatedDataFile(val date: LocalDate) {
       * Computes the file name.
       * @return The file name.
       */
-    def fileName = s"${fileNamePrefix}_${date.format(DatedDataFile.fileNameDateFormatter)}"
+    def fileName = s"${fileNamePrefix}_${date.format(DatedDataFile.fileNameDateFormatter)}.data"
 
 }
 

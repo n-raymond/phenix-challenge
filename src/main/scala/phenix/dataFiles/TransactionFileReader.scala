@@ -17,6 +17,6 @@ class TransactionFileReader(date: LocalDate) extends DatedDataFile(date) with Da
     override def fileNamePrefix: String = "transactions"
 
     /** @inheritdoc */
-    override def parseData(serializedData: String) = Transaction(serializedData)
+    override def parseData(serializedData: String): Transaction = Transaction(serializedData)
 
 }

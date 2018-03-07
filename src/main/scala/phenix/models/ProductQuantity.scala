@@ -1,31 +1,35 @@
 package phenix.models
 
+import java.util.UUID
+
 import phenix.models.exceptions.DeserializationException
 
 /**
-  * Associates a product to a quantity that was sold.
+  * Represents a quantity of a product that was sold (someday) in
+  * a specific shop.
   */
-case class ProductQuantity(product: Int, quantity: Int) {
+case class ProductQuantity(shop: UUID, quantity: Int) extends {
 
-    override def toString: String = s"${product}|${quantity}"
+    override def toString: String = s"${shop}|${quantity}"
 
 }
 
 object ProductQuantity {
 
-
     /**
-      * A factory to build a ProductQuantity by deserializing it from a string.
+      * Builds a ProductQuantity by deserializing it from a string.
       * @param productQty a string representing a product quantity with the following format:
       *                    5|129
       * @return a product quantity computed from the given serialized transaction
       */
+    @throws(classOf[DeserializationException])
     def apply(productQty: String): ProductQuantity = {
         try {
             val parsed = productQty.split('|')
-            ProductQuantity(parsed(0).toInt, parsed(1).toInt)
+            ProductQuantity(UUID.fromString(parsed(0)), parsed(1).toInt)
         } catch {
             case e: NumberFormatException => throw new DeserializationException(productQty, e)
+            case e: IllegalArgumentException => throw new DeserializationException(productQty, e)
             case e: IndexOutOfBoundsException=> throw new DeserializationException(productQty, e)
         }
     }

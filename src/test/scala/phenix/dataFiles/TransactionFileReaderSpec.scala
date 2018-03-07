@@ -57,17 +57,17 @@ class TransactionFileReaderSpec extends FlatSpec with Matchers with MockFactory 
     /* Tests */
 
     "fileName" should "return a valid file name according to the date" in {
-        transactionFile.fileName should equal ("transactions_20150514")
+        transactionFile.fileName should equal ("transactions_20150514.data")
     }
 
     "getContent" should "return a valid stream containing deserialized data" in {
         (fileReader.getFileLines _) when() returns(smallFileContent)
 
         val expected = Stream(
-            Success(new Transaction(1, LocalDate.of(2017, 5, 14), UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 531, 5)),
-            Success(new Transaction(1, LocalDate.of(2017, 5, 14), UUID.fromString("bdc2a431-797d-4b07-9567-67c565a67b84"), 55, 3)),
-            Success(new Transaction(1, LocalDate.of(2017, 5, 14), UUID.fromString("72a2876c-bc8b-4f35-8882-8d661fac2606"), 39, 8)),
-            Success(new Transaction(2, LocalDate.of(2017, 5, 14), UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 10, 6))
+            Success(new Transaction(UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 531, 5)),
+            Success(new Transaction(UUID.fromString("bdc2a431-797d-4b07-9567-67c565a67b84"), 55, 3)),
+            Success(new Transaction(UUID.fromString("72a2876c-bc8b-4f35-8882-8d661fac2606"), 39, 8)),
+            Success(new Transaction(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 10, 6))
         )
 
         transactionFile.getContent(fileReader) should equal (expected)
@@ -91,32 +91,32 @@ class TransactionFileReaderSpec extends FlatSpec with Matchers with MockFactory 
 
         val expected = Stream(
             (0, Stream(
-                Success(new Transaction(1, LocalDate.of(2017, 5, 14), UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 531, 5)),
-                Success(new Transaction(1, LocalDate.of(2017, 5, 14), UUID.fromString("bdc2a431-797d-4b07-9567-67c565a67b84"), 55, 3)),
-                Success(new Transaction(1, LocalDate.of(2017, 5, 14), UUID.fromString("72a2876c-bc8b-4f35-8882-8d661fac2606"), 39, 8)),
-                Success(new Transaction(2, LocalDate.of(2017, 5, 14), UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 10, 6)),
-                Success(new Transaction(2, LocalDate.of(2017, 5, 14), UUID.fromString("8e588f2f-d19e-436c-952f-1cdd9f0b12b0"), 773, 2))
+                Success(new Transaction(UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 531, 5)),
+                Success(new Transaction(UUID.fromString("bdc2a431-797d-4b07-9567-67c565a67b84"), 55, 3)),
+                Success(new Transaction(UUID.fromString("72a2876c-bc8b-4f35-8882-8d661fac2606"), 39, 8)),
+                Success(new Transaction(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 10, 6)),
+                Success(new Transaction(UUID.fromString("8e588f2f-d19e-436c-952f-1cdd9f0b12b0"), 773, 2))
             )),
             (1, Stream(
-                Success(new Transaction(2, LocalDate.of(2017, 5, 14), UUID.fromString("bdc2a431-797d-4b07-9567-67c565a67b84"), 759, 1)),
-                Success(new Transaction(3, LocalDate.of(2017, 5, 14), UUID.fromString("bf0999da-ae45-49df-983e-89020198330b"), 789, 6)),
-                Success(new Transaction(3, LocalDate.of(2017, 5, 14), UUID.fromString("6af0502b-ce7a-4a6f-b5d3-516d09514095"), 520, 5)),
-                Success(new Transaction(3, LocalDate.of(2017, 5, 14), UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 733, 3)),
-                Success(new Transaction(3, LocalDate.of(2017, 5, 14), UUID.fromString("dd43720c-be43-41b6-bc4a-ac4beabd0d9b"), 985, 9))
+                Success(new Transaction(UUID.fromString("bdc2a431-797d-4b07-9567-67c565a67b84"), 759, 1)),
+                Success(new Transaction(UUID.fromString("bf0999da-ae45-49df-983e-89020198330b"), 789, 6)),
+                Success(new Transaction(UUID.fromString("6af0502b-ce7a-4a6f-b5d3-516d09514095"), 520, 5)),
+                Success(new Transaction(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 733, 3)),
+                Success(new Transaction(UUID.fromString("dd43720c-be43-41b6-bc4a-ac4beabd0d9b"), 985, 9))
             )),
             (2, Stream(
-                Success(new Transaction(3, LocalDate.of(2017, 5, 14), UUID.fromString("bf0999da-ae45-49df-983e-89020198330b"), 307, 1)),
-                Success(new Transaction(3, LocalDate.of(2017, 5, 14), UUID.fromString("6af0502b-ce7a-4a6f-b5d3-516d09514095"), 563, 7)),
-                Success(new Transaction(4, LocalDate.of(2017, 5, 14), UUID.fromString("af068240-8198-4b79-9cf9-c28c0db65f63"), 733, 8)),
-                Success(new Transaction(4, LocalDate.of(2017, 5, 14), UUID.fromString("72a2876c-bc8b-4f35-8882-8d661fac2606"), 54, 1)),
-                Success(new Transaction(4, LocalDate.of(2017, 5, 14), UUID.fromString("af068240-8198-4b79-9cf9-c28c0db65f63"), 3, 3))
+                Success(new Transaction(UUID.fromString("bf0999da-ae45-49df-983e-89020198330b"), 307, 1)),
+                Success(new Transaction(UUID.fromString("6af0502b-ce7a-4a6f-b5d3-516d09514095"), 563, 7)),
+                Success(new Transaction(UUID.fromString("af068240-8198-4b79-9cf9-c28c0db65f63"), 733, 8)),
+                Success(new Transaction(UUID.fromString("72a2876c-bc8b-4f35-8882-8d661fac2606"), 54, 1)),
+                Success(new Transaction(UUID.fromString("af068240-8198-4b79-9cf9-c28c0db65f63"), 3, 3))
             )),
             (3, Stream(
-                Success(new Transaction(4, LocalDate.of(2017, 5, 14), UUID.fromString("bdc2a431-797d-4b07-9567-67c565a67b84"), 124, 8)),
-                Success(new Transaction(4, LocalDate.of(2017, 5, 14), UUID.fromString("6af0502b-ce7a-4a6f-b5d3-516d09514095"), 562, 1)),
-                Success(new Transaction(5, LocalDate.of(2017, 5, 14), UUID.fromString("8e588f2f-d19e-436c-952f-1cdd9f0b12b0"), 266, 3)),
-                Success(new Transaction(6, LocalDate.of(2017, 5, 14), UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 617, 0)),
-                Success(new Transaction(6, LocalDate.of(2017, 5, 14), UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 617,  3))
+                Success(new Transaction(UUID.fromString("bdc2a431-797d-4b07-9567-67c565a67b84"), 124, 8)),
+                Success(new Transaction(UUID.fromString("6af0502b-ce7a-4a6f-b5d3-516d09514095"), 562, 1)),
+                Success(new Transaction(UUID.fromString("8e588f2f-d19e-436c-952f-1cdd9f0b12b0"), 266, 3)),
+                Success(new Transaction(UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 617, 0)),
+                Success(new Transaction(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 617,  3))
             ))
         )
 
