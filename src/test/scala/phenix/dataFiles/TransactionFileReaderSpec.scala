@@ -14,6 +14,8 @@ class TransactionFileReaderSpec extends FlatSpec with Matchers with MockFactory 
     /* Initialization */
 
     val transactionFile = new TransactionFileReader(LocalDate.of(2015, 5, 14))
+    val fileReader = stub[FileReader]
+    transactionFile.fileReader = fileReader
 
     val smallFileContent = Iterator(
         "1|20170514T223544+0100|2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71|531|5",
@@ -52,7 +54,6 @@ class TransactionFileReaderSpec extends FlatSpec with Matchers with MockFactory 
         "6|20170514T010831+0100|29366c83-eae9-42d3-a8af-f15339830dc5|617|3"
     )
 
-    val fileReader = stub[FileReader]
 
     /* Tests */
 
@@ -70,13 +71,13 @@ class TransactionFileReaderSpec extends FlatSpec with Matchers with MockFactory 
             Success(new Transaction(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 10, 6))
         )
 
-        transactionFile.getContent(fileReader) should equal (expected)
+        transactionFile.getContent should equal (expected)
     }
 
     it should "return a stream containing deserialized data with a Failed value in second place and Success in other positions" in {
         (fileReader.getFileLines _) when() returns(smallInvalidFileContent)
 
-        val result = transactionFile.getContent(fileReader)
+        val result = transactionFile.getContent
 
         result(0) shouldBe a [Success[_]]
         result(1) shouldBe a [Failure[_]]
@@ -87,7 +88,7 @@ class TransactionFileReaderSpec extends FlatSpec with Matchers with MockFactory 
     "getChunks" should "return a valid stream of chunks" in {
         (fileReader.getFileLines _) when() returns(largeFileContent)
 
-        val result = transactionFile.getChunks(5)(fileReader)
+        val result = transactionFile.getChunks(5)
 
         val expected = Stream(
             (0, Stream(

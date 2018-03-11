@@ -62,7 +62,7 @@ object DatedDataFile {
         /**
           * The file reader that will be used to read some file.
           */
-        implicit val fileReader : FileReader = FileReader(fileName)
+        var fileReader : FileReader = FileReader(fileName)
 
         /**
           * Closes resources related to the file.
@@ -71,10 +71,9 @@ object DatedDataFile {
 
         /**
           * Gives a Stream containing all the Data inputs of the file.
-          * @param fileReader The file reader used to read the file
           * @return The content of the file as a stream of Data
           */
-        def getContent(implicit fileReader: FileReader) : Stream[Try[Data]] = {
+        def getContent : Stream[Try[Data]] = {
             fileReader.getFileLines.toStream map { line => Try(parseData(line)) }
         }
 
@@ -87,10 +86,9 @@ object DatedDataFile {
           * Divide the current file into a stream of his different parts (a chunk) of size chunkSize.
           * Each part is associated with his own identifier.
           * @param chunkSize The number of element in each chunks
-          * @param fileReader The file reader used to read the file
           * @return A stream of the different parts of the file
           */
-        def getChunks(chunkSize: Int)(implicit fileReader: FileReader) : Stream[(Int, Chunk)] = {
+        def getChunks(chunkSize: Int) : Stream[(Int, Chunk)] = {
             def partitioning(groups: Iterator[Chunk], offset: Int = 0): Stream[(Int, Chunk)] = {
                 if(groups.hasNext) {
                     val group = groups.next
@@ -115,7 +113,7 @@ object DatedDataFile {
         /**
           * The file writer that will be used to write on some file.
           */
-        implicit val fileWriter : FileWriter = FileWriter(fileName)
+        var fileWriter : FileWriter = FileWriter(fileName)
 
         /**
           * Closes resources related to the file.
@@ -126,9 +124,8 @@ object DatedDataFile {
           * Write each element of the data on each line of
           * the current file.
           * @param lines A stream containing each data element to write on the file lines
-          * @param fileWriter The file writer used to write on the file
           */
-        def writeData(lines: Stream[Data])(implicit fileWriter: FileWriter) : Unit = {
+        def writeData(lines: Stream[Data]) : Unit = {
             fileWriter.writeLines(lines map (_.toString))
         }
 

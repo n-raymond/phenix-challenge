@@ -5,9 +5,8 @@ import java.util.UUID
 
 import org.scalamock.scalatest.MockFactory
 import org.scalatest._
-import phenix.dataFiles
 import phenix.io.FileReader
-import phenix.models.{ProductQuantity}
+import phenix.models.ProductQuantity
 
 import scala.util.{Failure, Success}
 
@@ -15,7 +14,9 @@ class ProductQuantityFileReaderSpec extends FlatSpec with Matchers with MockFact
 
     /* Initialization */
 
-    val pqtyFile = new dataFiles.ProductQuantityFile.Reader(19, LocalDate.of(2015, 5, 14))
+    val pqtyFile = new ProductQuantityFile.Reader(19, LocalDate.of(2015, 5, 14))
+    val fileReader = stub[FileReader]
+    pqtyFile.fileReader = fileReader
 
     val smallFileContent = Iterator(
         "2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71|531",
@@ -31,7 +32,7 @@ class ProductQuantityFileReaderSpec extends FlatSpec with Matchers with MockFact
         "29366c83-eae9-42d3-a8af-f15339830dc5|10"
     )
 
-    val fileReader = stub[FileReader]
+
 
     /* Tests */
 
@@ -49,13 +50,13 @@ class ProductQuantityFileReaderSpec extends FlatSpec with Matchers with MockFact
             Success(new ProductQuantity(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 10))
         )
 
-        pqtyFile.getContent(fileReader) should equal (expected)
+        pqtyFile.getContent should equal (expected)
     }
 
     it should "return a stream containing deserialized data with a Failed value in second place and Success in other positions" in {
         (fileReader.getFileLines _) when() returns(smallInvalidFileContent)
 
-        val result = pqtyFile.getContent(fileReader)
+        val result = pqtyFile.getContent
 
         result(0) shouldBe a [Success[_]]
         result(1) shouldBe a [Failure[_]]
