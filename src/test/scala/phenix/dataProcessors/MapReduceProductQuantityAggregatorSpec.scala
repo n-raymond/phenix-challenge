@@ -8,7 +8,7 @@ import phenix.models.{ProductQuantity, Transaction}
 import scala.collection.SortedMap
 import scala.util.{Failure, Success}
 
-class MapReduceQuantityAggregatorSpec extends FlatSpec with Matchers {
+class MapReduceProductQuantityAggregatorSpec extends FlatSpec with Matchers {
 
     "aggregateProductsByShop" should "succeed to aggregate the transactions by shop" in {
 
@@ -22,7 +22,7 @@ class MapReduceQuantityAggregatorSpec extends FlatSpec with Matchers {
             Transaction(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 78, 34)
         )
 
-        val result = MapReduceQuantityAggregator.aggregateProductsByShop(initialStream).toList sortBy (_.shop)
+        val result = MapReduceProductQuantityAggregator.aggregateProductsByShop(initialStream).toList sortBy (_.shop)
 
         val expected = Iterable(
             ProductQuantity(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 8 + 34),
@@ -55,7 +55,7 @@ class MapReduceQuantityAggregatorSpec extends FlatSpec with Matchers {
             Success(Transaction(UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 78, 7))
         )
 
-        val result = SortedMap(MapReduceQuantityAggregator.aggregateChunk(initialStream).toArray:_*) map {
+        val result = SortedMap(MapReduceProductQuantityAggregator.aggregateChunk(initialStream).toArray:_*) map {
             case (k, v) => (k, v.toList.sortBy(_.shop))
         }
 
@@ -91,7 +91,7 @@ class MapReduceQuantityAggregatorSpec extends FlatSpec with Matchers {
             Success(76)
         )
 
-        val result = MapReduceQuantityAggregator.filterSuccessValues(initialValues)
+        val result = MapReduceProductQuantityAggregator.filterSuccessValues(initialValues)
 
         val expected = Iterable(3, 10, 11, 385, 75, 76)
 

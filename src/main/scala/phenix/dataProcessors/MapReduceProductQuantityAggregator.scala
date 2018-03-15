@@ -9,7 +9,7 @@ import com.typesafe.config.ConfigFactory
 import scala.util.{Failure, Success, Try}
 import scala.collection.immutable.Map
 
-object MapReduceQuantityAggregator extends ProductQuantityAggregable with ResourceCloseable {
+object MapReduceProductQuantityAggregator extends ProductQuantityAggregeable with ResourceCloseable {
 
     private val conf = ConfigFactory.load()
 

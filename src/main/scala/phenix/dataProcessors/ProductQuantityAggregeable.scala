@@ -7,19 +7,19 @@ import phenix.dataFiles.{ProductQuantityFile, TransactionFileReader}
   * A ProductQuantityAggregator offer a way to process transaction
   * and aggregate the sum of each sold product into ProductQuantityFiles
   */
-trait ProductQuantityAggregable {
+trait ProductQuantityAggregeable {
 
     def aggregate(transactionFileReader: TransactionFileReader) : Iterable[ProductQuantityFile.Reader]
 
 }
 
-object ProductQuantityAggregable {
+object ProductQuantityAggregeable {
 
     /**
       * A factory that returns the default implementation of ProductQuantityAggregator
       * @return A ProductQuantityAggregator
       */
-    def apply: ProductQuantityAggregable = MapReduceQuantityAggregator
+    def apply: ProductQuantityAggregeable = MapReduceProductQuantityAggregator
 
 
 }
