@@ -2,12 +2,18 @@ package phenix.dataProcessors
 
 import phenix.dataFiles.{IntermediateProductQuantityFile, ProductQuantityFile, TransactionFileReader}
 import phenix.models.{ProductQuantity, Transaction}
-import phenix.utils.ResourceClosable
+import phenix.utils.ResourceCloseable
+
+import com.typesafe.config.ConfigFactory
 
 import scala.util.{Failure, Success, Try}
+import scala.collection.immutable.Map
 
+object MapReduceQuantityAggregator extends ProductQuantityAggregable with ResourceCloseable {
 
-object MapReduceQuantityAggregator extends ProductQuantityAggregable with ResourceClosable {
+    private val conf = ConfigFactory.load()
+
+    private val chunkSize = conf.getInt("transactions.chunk-size")
 
     override def aggregate(transactionFileReader: TransactionFileReader): Iterable[ProductQuantityFile.Reader] = {
 
@@ -16,19 +22,33 @@ object MapReduceQuantityAggregator extends ProductQuantityAggregable with Resour
 
     }
 
-    def map(transactionFileReader: TransactionFileReader, chunkSize: Int = 1024) : (Set[Int], Set[Int]) = {
-
-        transactionFileReader.getChunks(chunkSize) foreach { chunk =>
-            aggregateChunk(chunk._2)
+    /**
+      * Divides the given transaction file into several chunks and aggregate them to produce several IntermediateProductQuantityFile.
+      * @param transactionFileReader The transaction file that should be processed to do the aggregation
+      * @return A map binding the productId with all the intermediate product quantity files related
+      */
+    def map(transactionFileReader: TransactionFileReader) : Map[Int, Iterable[IntermediateProductQuantityFile.Reader]] = {
+        (Map[Int, Stream[IntermediateProductQuantityFile.Reader]]() /: transactionFileReader.getChunks(chunkSize)) {
+            case (map, (chunkId, chunk)) =>
+                (map /: aggregateChunk(chunk)) {
+                    case (innerMap, (productId, productQuantities)) =>
+                        tryWith(new IntermediateProductQuantityFile.Writer(productId, chunkId, transactionFileReader.date)) {
+                            _.writeData(productQuantities)
+                        }
+                        val freshReader = new IntermediateProductQuantityFile.Reader(productId, chunkId, transactionFileReader.date)
+                        innerMap.get(productId) match {
+                            case Some(readers) => map + (productId -> freshReader #:: readers)
+                            case None => map + (productId -> freshReader #:: Stream[IntermediateProductQuantityFile.Reader]())
+                        }
+                }
         }
-        ???
-
     }
 
     /**
-      *
-      * @param chunk
-      * @return
+      * Aggregates each tried transaction by grouping them by product and summing the quantity of
+      * the one which came from the same shop.
+      * @param chunk A chunk containing some tried transactions
+      * @return A map that binds the productId to an iterable of ProductQuantity
       */
     def aggregateChunk(chunk: Iterable[Try[Transaction]]): Map[Int, Iterable[ProductQuantity]] = {
         filterSuccessValues(chunk) groupBy {
