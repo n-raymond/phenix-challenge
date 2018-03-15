@@ -25,7 +25,7 @@ class TransactionSpec extends FlatSpec with Matchers {
     }
 
     it should "throw an exception if a field is missing" in {
-        a [DeserializationException] should be thrownBy Transaction("5|8e588f2f-d19e-436c-952f-1cdd9f0b12b0|266|3")
+        a [DeserializationException] should be thrownBy Transaction("5|20170514T004132+0100|8e588f2f-d19e-436c-952f-1cdd9f0b12b0|266")
     }
 
 }

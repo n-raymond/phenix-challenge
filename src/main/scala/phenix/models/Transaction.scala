@@ -1,7 +1,5 @@
 package phenix.models
 
-import java.time.LocalDate
-import java.time.format.{DateTimeFormatter, DateTimeParseException}
 import java.util.UUID
 
 import phenix.models.exceptions.DeserializationException
@@ -10,7 +8,11 @@ import phenix.models.exceptions.DeserializationException
   * A transaction that has a certain id and happened at the given datetime, in the given shop,
   * for a given product sold at a given quantity.
   */
-case class Transaction(shop: UUID, product: Int, quantity: Int)
+case class Transaction(shop: UUID, product: Int, quantity: Int) {
+
+    override def toString: String = s"0|20000101T000000+01000|$shop|$product|$quantity"
+
+}
 
 object Transaction {
 

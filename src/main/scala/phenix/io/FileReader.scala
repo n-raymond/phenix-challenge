@@ -1,5 +1,7 @@
 package phenix.io
 
+import java.io.IOException
+
 /**
   * Handles File reading operations.
   */
@@ -8,8 +10,10 @@ trait FileReader extends AutoCloseable {
     /**
       * Return an iterator containing each line of the current file as String.
       * @return The file content as a string iterator
+      * @throws IOException if the file could not be read.
       */
-    def getFileLines : Iterator[String]
+    @throws[IOException]
+    def readLines : Iterator[String]
 
     /**
       * Close file resources
@@ -23,6 +27,6 @@ object FileReader {
     /**
       * A factory to get the default FileReader.
       */
-    def apply(fileName: String) : FileReader = new FileReaderWithBufferedSource(fileName)
+    def apply(fileName: String) : FileReader = new BufferedSourceAdapter(fileName)
 }
 

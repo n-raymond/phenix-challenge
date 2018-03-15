@@ -19,7 +19,7 @@ object ProductQuantity {
     /**
       * Builds a ProductQuantity by deserializing it from a string.
       * @param productQty a string representing a product quantity with the following format:
-      *                    5|129
+      *                    8e588f2f-d19e-436c-952f-1cdd9f0b12b0|129
       * @return a product quantity computed from the given serialized transaction
       */
     @throws(classOf[DeserializationException])

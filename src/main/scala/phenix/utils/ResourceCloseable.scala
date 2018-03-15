@@ -4,7 +4,7 @@ package phenix.utils
   * Used to add functionality of closing automatically
   * AutoCloseable objects.
   */
-trait ResourceClosable {
+trait ResourceCloseable {
 
     /**
       * Applies the function f to a closeable element to get an element of type A

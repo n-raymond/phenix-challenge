@@ -7,7 +7,7 @@ import phenix.models.exceptions.DeserializationException
   */
 case class ProductPrice(product: Int, price: Int) extends {
 
-    override def toString: String = s"${product}|${price}"
+    override def toString: String = s"$product|$price"
 
 }
 
