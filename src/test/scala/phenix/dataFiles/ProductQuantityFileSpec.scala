@@ -18,7 +18,7 @@ class ProductQuantityFileSpec extends FlatSpec with Matchers with MockFactory {
     "fileName" should "return a valid file name" in {
         val file = new ProductQuantityFile(37, LocalDate.of(2015, 5, 14))
 
-        file.fileName should equal (s"${conf.getString("paths.intermediate")}/product_qty_37_20150514.data")
+        file.fileName should equal (s"${conf.getString("paths.data")}/product_quantity/product_qty_37_20150514.data")
     }
 
     "ProductQuantityFile.Reader" should "be able to read data from file" in {

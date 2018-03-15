@@ -3,6 +3,7 @@ package phenix.models
 import java.util.UUID
 
 import phenix.models.exceptions.DeserializationException
+import phenix.utils.StrictlyNaturalIntDeserializer
 
 /**
   * A transaction that has a certain id and happened at the given datetime, in the given shop,
@@ -14,7 +15,7 @@ case class Transaction(shop: UUID, product: Int, quantity: Int) {
 
 }
 
-object Transaction {
+object Transaction extends StrictlyNaturalIntDeserializer {
 
     /**
       * Builds a Transaction by deserializing it from a string.
@@ -27,7 +28,7 @@ object Transaction {
         try {
             val parsed = transaction.split('|')
             /* We are ignoring the transaction id and the date since it not be used... */
-            Transaction(UUID.fromString(parsed(2)), parsed(3).toInt, parsed(4).toInt)
+            Transaction(UUID.fromString(parsed(2)), parsed(3).toInt, strictlyPositiveDeserialization(parsed(4)))
         } catch {
             case e: NumberFormatException => throw new DeserializationException(transaction, e)
             case e: IllegalArgumentException => throw new DeserializationException(transaction, e)

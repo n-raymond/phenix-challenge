@@ -18,7 +18,7 @@ class IntermediateProductQuantityFileSpec extends FlatSpec with Matchers with Mo
     "fileName" should "return a valid file name" in {
         val file = new IntermediateProductQuantityFile(37, 14, LocalDate.of(2015, 5, 14))
 
-        file.fileName should equal (s"${conf.getString("paths.intermediate")}/intermediate_product_qty_37_14_20150514.data")
+        file.fileName should equal (s"${conf.getString("paths.data")}/product_quantity/inter/intermediate_product_qty_37_14_20150514.data")
     }
 
     "ProductQuantityFile.Reader" should "be able to read data from file" in {

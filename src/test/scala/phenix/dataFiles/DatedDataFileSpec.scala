@@ -160,6 +160,10 @@ class DatedDataFileSpec extends FlatSpec with Matchers with MockFactory {
         file.writeData(Stream(1, 2, 3, 4))
     }
 
+    /*it should "create the folders if they do not exist" in {
+        ???
+    }*/
+
     it should "open the writer" in {
         val file = new WritableIntDatedDataFile(LocalDate.of(2015, 5, 14))
 

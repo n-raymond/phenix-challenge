@@ -135,20 +135,6 @@ object DatedDataFile {
         }
     }
 
-    /**
-      * Changes the location of the file to the one used for intermediate files
-      */
-    trait IntermediateFile extends DatedDataFile {
-        override val fileLocation : String = conf.getString("paths.intermediate")
-    }
-
-    /**
-      * Changes the location of the file to the one used for result files
-      */
-    trait ResultFile extends DatedDataFile {
-        override val fileLocation: String = conf.getString("paths.result")
-    }
-
 }
 
 

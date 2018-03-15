@@ -22,12 +22,15 @@ object MapReduceProductQuantityAggregator extends ProductQuantityAggregeable wit
 
     }
 
+    /* Map */
+
     /**
       * Divides the given transaction file into several chunks and aggregate them to produce several IntermediateProductQuantityFile.
+      *
       * @param transactionFileReader The transaction file that should be processed to do the aggregation
       * @return A map binding the productId with all the intermediate product quantity files related
       */
-    def map(transactionFileReader: TransactionFileReader) : Map[Int, Iterable[IntermediateProductQuantityFile.Reader]] = {
+    def map(transactionFileReader: TransactionFileReader): Map[Int, Iterable[IntermediateProductQuantityFile.Reader]] = {
         (Map[Int, Stream[IntermediateProductQuantityFile.Reader]]() /: transactionFileReader.getChunks(chunkSize)) {
             case (map, (chunkId, chunk)) =>
                 (map /: aggregateChunk(chunk)) {
@@ -47,6 +50,7 @@ object MapReduceProductQuantityAggregator extends ProductQuantityAggregeable wit
     /**
       * Aggregates each tried transaction by grouping them by product and summing the quantity of
       * the one which came from the same shop.
+      *
       * @param chunk A chunk containing some tried transactions
       * @return A map that binds the productId to an iterable of ProductQuantity
       */
@@ -61,6 +65,7 @@ object MapReduceProductQuantityAggregator extends ProductQuantityAggregeable wit
     /**
       * Aggregates each given Transaction that came from the same shop and
       * add their quantity to produce some ProductQuantities.
+      *
       * @param transactions A Stream containing
       * @return Several ProductQuantities resulting from the aggregation
       */
@@ -69,25 +74,34 @@ object MapReduceProductQuantityAggregator extends ProductQuantityAggregeable wit
             _.shop
         } map {
             case (shopId, transactionsOfShop) =>
-                val sum = (0 /: transactionsOfShop) {_ + _.quantity}
+                val sum = (0 /: transactionsOfShop) {
+                    _ + _.quantity
+                }
                 ProductQuantity(shopId, sum)
         }
     }
 
     /**
       * Filters the given Try values by keeping only the one who succeeded.
+      *
       * @param tries An iterable of the Try values
       * @tparam T The type of the value
       * @return An iterable of the succeeded values.
       */
-    def filterSuccessValues[T](tries: Iterable[Try[T]]) : Iterable[T] = {
+    def filterSuccessValues[T](tries: Iterable[Try[T]]): Iterable[T] = {
         tries filter {
-            case Success (_) => true
-            case Failure (_) => false
+            case Success(_) => true
+            case Failure(_) => false
         } map {
-            case Success (transaction) => transaction
-            case Failure (e) => throw new IllegalStateException ("Can't be a Failure by filter precondition", e)
+            case Success(transaction) => transaction
+            case Failure(e) => throw new IllegalStateException("Can't be a Failure by filter precondition", e)
         }
     }
+
+
+    /* Reduce */
+
+
+
 
 }

@@ -13,7 +13,10 @@ class IntermediateProductQuantityFile(productId: Int, val groupId: Int, date: Lo
     extends ProductQuantityFile(productId, date) {
 
     /** @inheritdoc */
-    override def fileNamePrefix: String = s"intermediate_product_qty_${productId}_${groupId}"
+    override def fileNamePrefix: String = s"intermediate_product_qty_${productId}_$groupId"
+
+    /** @inheritdoc */
+    override def fileLocation: String = s"${super.fileLocation}/inter"
 
 }
 
