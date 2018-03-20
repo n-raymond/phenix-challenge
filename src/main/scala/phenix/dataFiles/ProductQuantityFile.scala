@@ -14,7 +14,7 @@ import phenix.models.ProductQuantity
 class ProductQuantityFile(val productId: Int, date: LocalDate) extends DatedDataFile(date) {
 
     /** @inheritdoc */
-    override type Data = Product
+    override type Data = ProductQuantity
 
     /** @inheritdoc */
     override def fileNamePrefix: String = s"product_qty_$productId"
@@ -23,7 +23,7 @@ class ProductQuantityFile(val productId: Int, date: LocalDate) extends DatedData
     override def deserializeData(serializedData: String): ProductQuantity = ProductQuantity(serializedData)
 
     /** @inheritdoc */
-    override def serializeData(data: Product): String = data.toString
+    override def serializeData(data: ProductQuantity): String = data.toString
 
     /** @inheritdoc */
     override def fileLocation: String = s"${super.fileLocation}/product_quantity"

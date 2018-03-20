@@ -1,9 +1,10 @@
 package phenix.dataProcessors
 
+import java.time.LocalDate
+
 import phenix.dataFiles.{IntermediateProductQuantityFile, ProductQuantityFile, TransactionFileReader}
 import phenix.models.{ProductQuantity, Transaction}
 import phenix.utils.ResourceCloseable
-
 import com.typesafe.config.ConfigFactory
 
 import scala.util.{Failure, Success, Try}
@@ -16,10 +17,9 @@ object MapReduceProductQuantityAggregator extends ProductQuantityAggregeable wit
     private val chunkSize = conf.getInt("transactions.chunk-size")
 
     override def aggregate(transactionFileReader: TransactionFileReader): Iterable[ProductQuantityFile.Reader] = {
-
-        map(transactionFileReader)
-        ???
-
+        map(transactionFileReader) map { case (productId, readers) =>
+            reducer(productId, readers, transactionFileReader.date)
+        }
     }
 
     /* Map */
@@ -99,9 +99,26 @@ object MapReduceProductQuantityAggregator extends ProductQuantityAggregeable wit
     }
 
 
-    /* Reduce */
+    /* Reducer */
 
+    def reducer(productId: Int, readers : Iterable[IntermediateProductQuantityFile.Reader], date: LocalDate) = {
 
+        val lines = tryWith(readers) {
+            _ flatMap { reader =>
+                filterSuccessValues(reader.getContent)
+            } groupBy {
+                _.shop
+            } map {
+                case (shopId, quantities) =>
+                    ProductQuantity(shopId, (0 /: quantities)  (_ + _.quantity))
+            }
+        }
 
+        tryWith(new ProductQuantityFile.Writer(productId, date)) {
+            _.writeData(lines)
+        }
+
+        new ProductQuantityFile.Reader(productId, date)
+    }
 
 }

@@ -15,8 +15,12 @@ trait ResourceCloseable {
       * @tparam B The type of return of the f function
       * @return An element of type B
       */
-    def tryWith[A <: AutoCloseable, B](closeable: A)(f: A => B) = {
+    def tryWith[A <: AutoCloseable, B](closeable: A)(f: A => B) : B = {
         try { f(closeable) } finally { closeable.close() }
+    }
+
+    def tryWith[A <: AutoCloseable, B](closeables: Iterable[A])(f: Iterable[A] => B) : B = {
+        try { f(closeables) } finally { closeables foreach (_.close())}
     }
 
 }
