@@ -40,8 +40,8 @@ object MapReduceProductQuantityAggregator extends ProductQuantityAggregeable wit
                         }
                         val freshReader = new IntermediateProductQuantityFile.Reader(productId, chunkId, transactionFileReader.date)
                         innerMap.get(productId) match {
-                            case Some(readers) => map + (productId -> freshReader #:: readers)
-                            case None => map + (productId -> freshReader #:: Stream[IntermediateProductQuantityFile.Reader]())
+                            case Some(readers) => innerMap + (productId -> freshReader #:: readers)
+                            case None => innerMap + (productId -> freshReader #:: Stream[IntermediateProductQuantityFile.Reader]())
                         }
                 }
         }
