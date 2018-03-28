@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter
 
 import com.typesafe.config.ConfigFactory
 import phenix.io.{FileReader, FileWriter}
+import phenix.utils.Openable
 
 import scala.util.Try
 

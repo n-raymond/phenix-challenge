@@ -1,4 +1,4 @@
-package phenix.dataFiles
+package phenix.utils
 
 /**
   * A resource that can be opened or closed.
