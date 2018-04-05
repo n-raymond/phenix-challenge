@@ -2,6 +2,7 @@ package phenix.dataFiles
 
 import java.time.LocalDate
 
+import phenix.dataFiles.DatedDataFile.LocatedInResult
 import phenix.models.ProductQuantity
 
 
@@ -11,7 +12,7 @@ import phenix.models.ProductQuantity
   * @param productId The id of the product
   * @param date The date of the DatedDataFile
   */
-class ProductQuantityFile(val productId: Int, date: LocalDate) extends DatedDataFile(date) {
+class ProductQuantityFile(val productId: Int, date: LocalDate) extends DatedDataFile(date) with LocatedInResult{
 
     /** @inheritdoc */
     override type Data = ProductQuantity

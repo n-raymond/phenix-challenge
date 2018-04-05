@@ -26,9 +26,6 @@ abstract class DatedDataFile(val date: LocalDate) extends DataFile {
     protected def fileNamePrefix : String
 
     /** @inheritdoc */
-    override def fileLocation : String = DatedDataFile.conf.getString("paths.data")
-
-    /** @inheritdoc */
     override def fileName = s"$fileLocation/${fileNamePrefix}_${date.format(DatedDataFile.fileNameDateFormatter)}.data"
 
 }
@@ -135,7 +132,24 @@ object DatedDataFile {
             PathCreator.apply.createParentPathIfNotExist(fileName)
             fileWriter.writeLines(lines map { data => serializeData(data) })
         }
+    }
 
+    /**
+      * Adds the location of files that are initial data.
+      */
+    trait LocatedInData extends DatedDataFile {
+
+        /** @inheritdoc */
+        override def fileLocation : String = DatedDataFile.conf.getString("paths.data")
+    }
+
+    /**
+      * Adds the location of files that are produced by this software.
+      */
+    trait LocatedInResult extends DatedDataFile {
+
+        /** @inheritdoc */
+        override def fileLocation : String = DatedDataFile.conf.getString("paths.result")
     }
 
 }

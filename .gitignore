@@ -3,4 +3,5 @@ target
 project/target
 *.iml
 
-data/*/*
+data/*
+result/*
