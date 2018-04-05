@@ -4,7 +4,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import com.typesafe.config.ConfigFactory
-import phenix.io.{FileReader, FileWriter}
+import phenix.io.{FileReader, FileWriter, PathCreator}
 import phenix.utils.Openable
 
 import scala.util.Try
@@ -132,8 +132,10 @@ object DatedDataFile {
                 throw new IllegalStateException("The file could be written only one time per reader.")
             }
             open = true
+            PathCreator.apply.createParentPathIfNotExist(fileName)
             fileWriter.writeLines(lines map { data => serializeData(data) })
         }
+
     }
 
 }
