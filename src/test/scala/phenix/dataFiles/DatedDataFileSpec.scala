@@ -20,6 +20,7 @@ class DatedDataFileSpec extends FlatSpec with Matchers with MockFactory {
         override protected def fileNamePrefix: String = "int"
         override def deserializeData(serializedData: String): Int = serializedData.toInt
         override def serializeData(data: Int): String = data.toString
+        override def fileLocation: String = "test"
     }
 
     class ReadableIntDatedDataFile(date: LocalDate) extends IntDatedDataFile(date) with DatedDataFile.Readable
@@ -38,14 +39,9 @@ class DatedDataFileSpec extends FlatSpec with Matchers with MockFactory {
 
     /* Tests */
 
-    "fileLocation" should "return the location of data files" in {
-        val file = new IntDatedDataFile(LocalDate.of(2015, 5, 14))
-        file.fileLocation should equal (conf.getString("paths.data"))
-    }
-
     "fileName" should "return a valid file name according to the date" in {
         val file = new IntDatedDataFile(LocalDate.of(2015, 5, 14))
-        file.fileName should equal (s"${conf.getString("paths.data")}/int_20150514.data")
+        file.fileName should equal ("test/int_20150514.data")
     }
 
     "Readable.getContent" should "return a valid stream containing deserialized data" in {
