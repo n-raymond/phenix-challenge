@@ -1,13 +1,12 @@
 package phenix.dataFiles
 
+import java.time.LocalDate
+
 
 /**
   * Represents a file containing a certain type of data.
   */
-trait DataFile {
-
-    /** Each line of the file should contain a serialized version of a Data. */
-    type Data
+trait DataFile[Data] {
 
     /**
       * Represents the file location on the file system.
@@ -34,4 +33,9 @@ trait DataFile {
       */
     def serializeData(data: Data) : String
 
+    /**
+      *
+      * @return the file date.
+      */
+    def date: LocalDate
 }

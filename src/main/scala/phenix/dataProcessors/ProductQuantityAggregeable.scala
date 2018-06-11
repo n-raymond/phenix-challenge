@@ -1,6 +1,7 @@
 package phenix.dataProcessors
 
-import phenix.dataFiles.{ProductQuantityFile, TransactionFileReader}
+import phenix.dataFiles.ReadableDataFile
+import phenix.models.{ProductQuantity, Transaction}
 
 
 /**
@@ -9,18 +10,6 @@ import phenix.dataFiles.{ProductQuantityFile, TransactionFileReader}
   */
 trait ProductQuantityAggregeable {
 
-    def aggregate(transactionFileReader: TransactionFileReader) : Iterable[ProductQuantityFile.Reader]
+    def aggregate(transactionFileReader: ReadableDataFile[Transaction]) : Iterable[ReadableDataFile[ProductQuantity]]
 
 }
-
-object ProductQuantityAggregeable {
-
-    /**
-      * A factory that returns the default implementation of ProductQuantityAggregator
-      * @return A ProductQuantityAggregator
-      */
-    def apply: ProductQuantityAggregeable = MapReduceProductQuantityAggregator
-
-
-}
-

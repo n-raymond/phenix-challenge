@@ -2,10 +2,12 @@ package phenix.dataFiles
 
 import java.io.{FileNotFoundException, IOException}
 
+import phenix.utils.Openable
+
 /**
   * A file containing Data that can be written.
   */
-trait WritableDataFile extends DataFile {
+trait WritableDataFile[Data] extends DataFile[Data] with Openable {
 
     /**
       * Write each element of the data on each line of the current file.

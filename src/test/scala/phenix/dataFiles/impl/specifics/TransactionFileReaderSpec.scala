@@ -1,15 +1,15 @@
-package phenix.dataFiles
+package phenix.dataFiles.impl.specifics
 
-import org.scalatest._
-import org.scalamock.scalatest.MockFactory
 import java.time.LocalDate
 import java.util.UUID
 
 import com.typesafe.config.ConfigFactory
+import org.scalamock.scalatest.MockFactory
+import org.scalatest._
 import phenix.io.FileReader
 import phenix.models.Transaction
 
-import scala.util.{Failure, Success}
+import scala.util.Success
 
 class TransactionFileReaderSpec extends FlatSpec with Matchers with MockFactory {
 

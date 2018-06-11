@@ -1,31 +1,30 @@
-package phenix.dataFiles
+package phenix.dataFiles.impl
 
-import org.scalatest._
-import org.scalamock.scalatest.MockFactory
 import java.time.LocalDate
 
 import com.typesafe.config.ConfigFactory
+import org.scalamock.scalatest.MockFactory
+import org.scalatest._
 import phenix.io.{FileReader, FileWriter}
 
 import scala.util.{Failure, Success}
 
-class DatedDataFileSpec extends FlatSpec with Matchers with MockFactory {
+class DataFileImplSpec extends FlatSpec with Matchers with MockFactory {
 
     private val conf = ConfigFactory.load()
 
     /* A simple implementation */
 
-    class IntDatedDataFile(date: LocalDate) extends DatedDataFile(date) {
-        override type Data = Int
+    class IntDataFileImpl(date: LocalDate) extends DataFileImpl[Int](date) {
         override protected def fileNamePrefix: String = "int"
         override def deserializeData(serializedData: String): Int = serializedData.toInt
         override def serializeData(data: Int): String = data.toString
         override def fileLocation: String = "test"
     }
 
-    class ReadableIntDatedDataFile(date: LocalDate) extends IntDatedDataFile(date) with DatedDataFile.Readable
+    class ReadableIntDataFileImpl(date: LocalDate) extends IntDataFileImpl(date) with ReadableDataFileImpl[Int]
 
-    class WritableIntDatedDataFile(date: LocalDate) extends IntDatedDataFile(date) with DatedDataFile.Writable
+    class WritableIntDataFileImpl(date: LocalDate) extends IntDataFileImpl(date) with WritableDataFileImpl[Int]
 
 
     /* Data */
@@ -40,12 +39,12 @@ class DatedDataFileSpec extends FlatSpec with Matchers with MockFactory {
     /* Tests */
 
     "fileName" should "return a valid file name according to the date" in {
-        val file = new IntDatedDataFile(LocalDate.of(2015, 5, 14))
+        val file = new IntDataFileImpl(LocalDate.of(2015, 5, 14))
         file.fileName should equal ("test/int_20150514.data")
     }
 
     "Readable.getContent" should "return a valid stream containing deserialized data" in {
-        val file = new ReadableIntDatedDataFile(LocalDate.of(2015, 5, 14))
+        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         val fileReader = stub[FileReader]
         file.fileReader = fileReader
@@ -62,7 +61,7 @@ class DatedDataFileSpec extends FlatSpec with Matchers with MockFactory {
     }
 
     it should "return a stream containing deserialized data with a Failed value in second place and Success in other positions" in {
-        val file = new ReadableIntDatedDataFile(LocalDate.of(2015, 5, 14))
+        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         val fileReader = stub[FileReader]
         file.fileReader = fileReader
@@ -77,7 +76,7 @@ class DatedDataFileSpec extends FlatSpec with Matchers with MockFactory {
     }
 
     it should "open the reader" in {
-        val file = new ReadableIntDatedDataFile(LocalDate.of(2015, 5, 14))
+        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         val fileReader = mock[FileReader]
         file.fileReader = fileReader
@@ -91,7 +90,7 @@ class DatedDataFileSpec extends FlatSpec with Matchers with MockFactory {
     }
 
     it should "throw an IllegalStateException if called twice" in {
-        val file = new ReadableIntDatedDataFile(LocalDate.of(2015, 5, 14))
+        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         val fileReader = mock[FileReader]
         file.fileReader = fileReader
@@ -104,7 +103,7 @@ class DatedDataFileSpec extends FlatSpec with Matchers with MockFactory {
     }
 
     "Reader.getChunks" should "return a valid stream of chunks" in {
-        val file = new ReadableIntDatedDataFile(LocalDate.of(2015, 5, 14))
+        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         val fileReader = stub[FileReader]
         file.fileReader = fileReader
@@ -123,7 +122,7 @@ class DatedDataFileSpec extends FlatSpec with Matchers with MockFactory {
     }
 
     it should "open the reader" in {
-        val file = new ReadableIntDatedDataFile(LocalDate.of(2015, 5, 14))
+        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         val fileReader = mock[FileReader]
         file.fileReader = fileReader
@@ -137,7 +136,7 @@ class DatedDataFileSpec extends FlatSpec with Matchers with MockFactory {
     }
 
     "Reader.close" should "call the close function of the fileReader if called" in {
-        val file = new ReadableIntDatedDataFile(LocalDate.of(2015, 5, 14))
+        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         val fileReader = mock[FileReader]
         file.fileReader = fileReader
@@ -147,7 +146,7 @@ class DatedDataFileSpec extends FlatSpec with Matchers with MockFactory {
     }
 
     "Writer.writeLines" should "send serialized data on the fileWriter" in {
-        val file = new WritableIntDatedDataFile(LocalDate.of(2015, 5, 14))
+        val file = new WritableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         val fileWriter = mock[FileWriter]
         file.fileWriter = fileWriter
@@ -161,7 +160,7 @@ class DatedDataFileSpec extends FlatSpec with Matchers with MockFactory {
     }*/
 
     it should "open the writer" in {
-        val file = new WritableIntDatedDataFile(LocalDate.of(2015, 5, 14))
+        val file = new WritableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         val fileWriter = mock[FileWriter]
         file.fileWriter = fileWriter
@@ -175,7 +174,7 @@ class DatedDataFileSpec extends FlatSpec with Matchers with MockFactory {
     }
 
     it should "throw an IllegalStateException if called twice" in {
-        val file = new WritableIntDatedDataFile(LocalDate.of(2015, 5, 14))
+        val file = new WritableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         val fileWriter = mock[FileWriter]
         file.fileWriter = fileWriter
@@ -188,7 +187,7 @@ class DatedDataFileSpec extends FlatSpec with Matchers with MockFactory {
     }
 
     "Writer.close" should "call the close function of the fileWriter if called" in {
-        val file = new WritableIntDatedDataFile(LocalDate.of(2015, 5, 14))
+        val file = new WritableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         val fileWriter = mock[FileWriter]
         file.fileWriter = fileWriter

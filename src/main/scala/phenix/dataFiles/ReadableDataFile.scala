@@ -2,13 +2,15 @@ package phenix.dataFiles
 
 import java.io.{FileNotFoundException, IOException}
 
+import phenix.utils.Openable
+
 import scala.util.Try
 
 
 /**
   * A file containing data that can be read.
   */
-trait ReadableDataFile extends DataFile {
+trait ReadableDataFile[Data] extends DataFile[Data] with Openable {
 
     /**
       * Gives a Stream containing all the Data inputs of the file.

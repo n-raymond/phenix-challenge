@@ -1,8 +1,9 @@
-package phenix.dataFiles
+package phenix.dataFiles.impl.specifics
 
 import java.time.LocalDate
 
-import phenix.dataFiles.DatedDataFile.LocatedInResult
+import phenix.dataFiles.impl.DataFileImpl.LocatedInResult
+import phenix.dataFiles.impl.{DataFileImpl, ReadableDataFileImpl, WritableDataFileImpl}
 import phenix.models.ProductQuantity
 
 
@@ -12,16 +13,15 @@ import phenix.models.ProductQuantity
   * @param productId The id of the product
   * @param date The date of the DatedDataFile
   */
-class ProductQuantityFile(val productId: Int, date: LocalDate) extends DatedDataFile(date) with LocatedInResult{
-
-    /** @inheritdoc */
-    override type Data = ProductQuantity
+class ProductQuantityFile(val productId: Int, date: LocalDate)
+    extends DataFileImpl[ProductQuantity](date)
+        with LocatedInResult[ProductQuantity] {
 
     /** @inheritdoc */
     override def fileNamePrefix: String = s"product_qty_$productId"
 
     /** @inheritdoc*/
-    override def deserializeData(serializedData: String): ProductQuantity = ProductQuantity(serializedData)
+    override def deserializeData(serializedData: String): phenix.models.ProductQuantity = ProductQuantity(serializedData)
 
     /** @inheritdoc */
     override def serializeData(data: ProductQuantity): String = data.toString
@@ -35,10 +35,10 @@ object ProductQuantityFile {
 
     class Reader(productId: Int, date: LocalDate)
         extends ProductQuantityFile(productId, date)
-            with DatedDataFile.Readable
+            with ReadableDataFileImpl[ProductQuantity]
 
     class Writer(productId: Int, date: LocalDate)
         extends ProductQuantityFile(productId, date)
-            with DatedDataFile.Writable
+            with WritableDataFileImpl[ProductQuantity]
 
 }

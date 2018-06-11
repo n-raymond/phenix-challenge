@@ -2,7 +2,7 @@ package phenix.dataProcessors
 
 import java.time.LocalDate
 
-import phenix.dataFiles.{IntermediateProductQuantityFile, ProductQuantityFile, TransactionFileReader}
+import phenix.dataFiles.{DataFileFactory, ReadableDataFile}
 import phenix.models.{ProductQuantity, Transaction}
 import phenix.utils.ResourceCloseable
 import com.typesafe.config.ConfigFactory
@@ -10,14 +10,17 @@ import com.typesafe.config.ConfigFactory
 import scala.util.{Failure, Success, Try}
 import scala.collection.immutable.Map
 
-object MapReduceProductQuantityAggregator extends ProductQuantityAggregeable with ResourceCloseable {
+class MapReduceProductQuantityAggregator(dataFileFactory: DataFileFactory)
+    extends ProductQuantityAggregeable with ResourceCloseable {
 
     private val conf = ConfigFactory.load()
 
     private val chunkSize = conf.getInt("transactions.chunk-size")
 
+
+
     /** @inheritdoc */
-    override def aggregate(transactionFileReader: TransactionFileReader): Iterable[ProductQuantityFile.Reader] = {
+    override def aggregate(transactionFileReader: ReadableDataFile[Transaction]): Iterable[ReadableDataFile[ProductQuantity]] = {
         map(transactionFileReader) map { case (productId, readers) =>
             reducer(productId, readers, transactionFileReader.date)
         }
@@ -31,18 +34,19 @@ object MapReduceProductQuantityAggregator extends ProductQuantityAggregeable wit
       * @param transactionFileReader The transaction file that should be processed to do the aggregation
       * @return A map binding the productId with all the intermediate product quantity files related
       */
-    def map(transactionFileReader: TransactionFileReader): Map[Int, Iterable[IntermediateProductQuantityFile.Reader]] = {
-        (Map[Int, Stream[IntermediateProductQuantityFile.Reader]]() /: transactionFileReader.getChunks(chunkSize)) {
+    def map(transactionFileReader: ReadableDataFile[Transaction]): Map[Int, Iterable[ReadableDataFile[ProductQuantity]]] = {
+        (Map[Int, Stream[ReadableDataFile[ProductQuantity]]]() /: transactionFileReader.getChunks(chunkSize)) {
             case (map, (chunkId, chunk)) =>
                 (map /: aggregateChunk(chunk)) {
                     case (innerMap, (productId, productQuantities)) =>
-                        tryWith(new IntermediateProductQuantityFile.Writer(productId, chunkId, transactionFileReader.date)) {
+                        tryWith(dataFileFactory.getInterProductQuantityWriter(productId, chunkId, transactionFileReader.date)) {
                             _.writeData(productQuantities)
                         }
-                        val freshReader = new IntermediateProductQuantityFile.Reader(productId, chunkId, transactionFileReader.date)
+                        val freshReader = dataFileFactory.getInterProductQuantityReader(productId, chunkId, transactionFileReader.date)
+                            //new IntermediateProductQuantityFile.Reader(productId, chunkId, transactionFileReader.date)
                         innerMap.get(productId) match {
                             case Some(readers) => innerMap + (productId -> freshReader #:: readers)
-                            case None => innerMap + (productId -> freshReader #:: Stream[IntermediateProductQuantityFile.Reader]())
+                            case None => innerMap + (productId -> freshReader #:: Stream[ReadableDataFile[ProductQuantity]]())
                         }
                 }
         }
@@ -110,7 +114,7 @@ object MapReduceProductQuantityAggregator extends ProductQuantityAggregeable wit
       * @param date The date of the sold of the product
       * @return A reader to file containing the aggregation of all the intermediate files.
       */
-    def reducer(productId: Int, readers : Iterable[IntermediateProductQuantityFile.Reader], date: LocalDate) = {
+    def reducer(productId: Int, readers : Iterable[ReadableDataFile[ProductQuantity]], date: LocalDate) = {
 
         val lines = tryWith(readers) {
             _ flatMap { reader =>
@@ -123,11 +127,11 @@ object MapReduceProductQuantityAggregator extends ProductQuantityAggregeable wit
             }
         }
 
-        tryWith(new ProductQuantityFile.Writer(productId, date)) {
+        tryWith(dataFileFactory.getProductQuantityWriter(productId, date)) {
             _.writeData(lines)
         }
 
-        new ProductQuantityFile.Reader(productId, date)
+        dataFileFactory.getProductQuantityReader(productId, date)
     }
 
 }
