@@ -17,7 +17,7 @@ trait ReadableDataFileImpl[Data] extends DataFileImpl[Data] with ReadableDataFil
     /**
       * The file reader that will be used to read some file.
       */
-    var fileReader : FileReader = FileReader(fileName)
+    val fileReader : FileReader = ioService.getFileReader(fileName)
 
     /**
       * Represents the state of reader resources.

@@ -15,7 +15,7 @@ trait WritableDataFileImpl[Data] extends DataFileImpl[Data] with WritableDataFil
     /**
       * The file writer that will be used to write on some file.
       */
-    var fileWriter : FileWriter = FileWriter(fileName)
+    val fileWriter : FileWriter = ioService.getFileWriter(fileName)
 
     /**
       * Represents the state of reader resources.

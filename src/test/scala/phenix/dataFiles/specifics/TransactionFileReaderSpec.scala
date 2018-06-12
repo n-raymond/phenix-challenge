@@ -6,6 +6,7 @@ import java.util.UUID
 import com.typesafe.config.ConfigFactory
 import org.scalamock.scalatest.MockFactory
 import org.scalatest._
+import phenix.io.{IOService, IOServiceImpl}
 import phenix.io.reader.FileReader
 import phenix.models.Transaction
 
@@ -15,13 +16,17 @@ class TransactionFileReaderSpec extends FlatSpec with Matchers with MockFactory 
 
     private val conf = ConfigFactory.load()
 
+    private val ioService = stub[IOService]
+
+    private val fileName = s"${conf.getString("paths.data")}/transactions_20150514.data"
+
+
     "fileName" should "return a valid file name according to the date" in {
-        val transactionFile = new TransactionFileReader(LocalDate.of(2015, 5, 14))
-        transactionFile.fileName should equal (s"${conf.getString("paths.data")}/transactions_20150514.data")
+        val transactionFile = new TransactionFileReader(LocalDate.of(2015, 5, 14), ioService)
+        transactionFile.fileName should equal (fileName)
     }
 
     "getContent" should "return a valid stream containing deserialized data" in {
-        val transactionFile = new TransactionFileReader(LocalDate.of(2015, 5, 14))
 
         val smallFileContent = Iterator(
             "1|20170514T223544+0100|2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71|531|5",
@@ -31,8 +36,10 @@ class TransactionFileReaderSpec extends FlatSpec with Matchers with MockFactory 
         )
 
         val fileReader = stub[FileReader]
-        transactionFile.fileReader = fileReader
+        ioService.getFileReader _ when fileName returns fileReader
         fileReader.readLines _ when() returns smallFileContent
+
+        val transactionFile = new TransactionFileReader(LocalDate.of(2015, 5, 14), ioService)
 
         val expected = Stream(
             Success(new Transaction(UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 531, 5)),
@@ -45,7 +52,7 @@ class TransactionFileReaderSpec extends FlatSpec with Matchers with MockFactory 
     }
 
     "serialise" should "well serialize a Transaction" in {
-        val transactionFile = new TransactionFileReader(LocalDate.of(2015, 5, 14))
+        val transactionFile = new TransactionFileReader(LocalDate.of(2015, 5, 14), ioService)
         val result = transactionFile.serializeData(Transaction(UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 531, 5))
 
         result should equal ("0|20000101T000000+01000|2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71|531|5")

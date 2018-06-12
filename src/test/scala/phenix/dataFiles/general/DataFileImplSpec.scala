@@ -2,10 +2,9 @@ package phenix.dataFiles.general
 
 import java.time.LocalDate
 
-import com.typesafe.config.ConfigFactory
 import org.scalamock.scalatest.MockFactory
 import org.scalatest._
-import phenix.dataFiles.general.{DataFileImpl, ReadableDataFileImpl, WritableDataFileImpl}
+import phenix.io.IOService
 import phenix.io.reader.FileReader
 import phenix.io.writer.FileWriter
 
@@ -13,11 +12,11 @@ import scala.util.{Failure, Success}
 
 class DataFileImplSpec extends FlatSpec with Matchers with MockFactory {
 
-    private val conf = ConfigFactory.load()
+    private val ioService = stub[IOService]
 
     /* A simple implementation */
 
-    class IntDataFileImpl(date: LocalDate) extends DataFileImpl[Int](date) {
+    class IntDataFileImpl(date: LocalDate) extends DataFileImpl[Int](date, ioService) {
         override protected def fileNamePrefix: String = "int"
         override def deserializeData(serializedData: String): Int = serializedData.toInt
         override def serializeData(data: Int): String = data.toString
@@ -37,20 +36,22 @@ class DataFileImplSpec extends FlatSpec with Matchers with MockFactory {
 
     private val largeFileContent = Range.inclusive(1, 20).map(_.toString).toIterator
 
+    private val fileName = "test/int_20150514.data"
+
 
     /* Tests */
 
     "fileName" should "return a valid file name according to the date" in {
         val file = new IntDataFileImpl(LocalDate.of(2015, 5, 14))
-        file.fileName should equal ("test/int_20150514.data")
+        file.fileName should equal (fileName)
     }
 
     "Readable.getContent" should "return a valid stream containing deserialized data" in {
-        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
-
         val fileReader = stub[FileReader]
-        file.fileReader = fileReader
+        ioService.getFileReader _ when fileName returns fileReader
         fileReader.readLines _ when() returns smallFileContent
+
+        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         val expected = Stream(
             Success(1),
@@ -63,11 +64,11 @@ class DataFileImplSpec extends FlatSpec with Matchers with MockFactory {
     }
 
     it should "return a stream containing deserialized data with a Failed value in second place and Success in other positions" in {
-        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
-
         val fileReader = stub[FileReader]
-        file.fileReader = fileReader
+        ioService.getFileReader _ when fileName returns fileReader
         fileReader.readLines _ when() returns smallInvalidFileContent
+
+        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         val result = file.getContent
 
@@ -78,25 +79,23 @@ class DataFileImplSpec extends FlatSpec with Matchers with MockFactory {
     }
 
     it should "open the reader" in {
-        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
-
         val fileReader = mock[FileReader]
-        file.fileReader = fileReader
+        ioService.getFileReader _ when fileName returns fileReader
         fileReader.readLines _ expects() returning smallFileContent
 
+        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
         file.isOpen should equal (false)
 
         file.getContent
-
         file.isOpen should equal (true)
     }
 
     it should "throw an IllegalStateException if called twice" in {
-        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
-
         val fileReader = mock[FileReader]
-        file.fileReader = fileReader
+        ioService.getFileReader _ when fileName returns fileReader
         fileReader.readLines _ expects() returning smallFileContent
+
+        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         //First Try
         file.getContent
@@ -105,11 +104,11 @@ class DataFileImplSpec extends FlatSpec with Matchers with MockFactory {
     }
 
     "Reader.getChunks" should "return a valid stream of chunks" in {
-        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
-
         val fileReader = stub[FileReader]
-        file.fileReader = fileReader
+        ioService.getFileReader _ when fileName returns fileReader
         fileReader.readLines _ when() returns largeFileContent
+
+        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         val result = file.getChunks(5)
 
@@ -124,11 +123,11 @@ class DataFileImplSpec extends FlatSpec with Matchers with MockFactory {
     }
 
     it should "open the reader" in {
-        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
-
         val fileReader = mock[FileReader]
-        file.fileReader = fileReader
+        ioService.getFileReader _ when fileName returns fileReader
         fileReader.readLines _ expects() returning smallFileContent
+
+        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         file.isOpen should equal (false)
 
@@ -138,21 +137,21 @@ class DataFileImplSpec extends FlatSpec with Matchers with MockFactory {
     }
 
     "Reader.close" should "call the close function of the fileReader if called" in {
-        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
-
         val fileReader = mock[FileReader]
-        file.fileReader = fileReader
+        ioService.getFileReader _ when fileName returns fileReader
         fileReader.close _ expects()
+
+        val file = new ReadableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         file.close()
     }
 
     "Writer.writeLines" should "send serialized data on the fileWriter" in {
-        val file = new WritableIntDataFileImpl(LocalDate.of(2015, 5, 14))
-
         val fileWriter = mock[FileWriter]
-        file.fileWriter = fileWriter
+        ioService.getFileWriter _ when fileName returns fileWriter
         fileWriter.writeLines _ expects Iterable("1", "2", "3", "4")
+
+        val file = new WritableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         file.writeData(Stream(1, 2, 3, 4))
     }
@@ -162,11 +161,11 @@ class DataFileImplSpec extends FlatSpec with Matchers with MockFactory {
     }*/
 
     it should "open the writer" in {
-        val file = new WritableIntDataFileImpl(LocalDate.of(2015, 5, 14))
-
         val fileWriter = mock[FileWriter]
-        file.fileWriter = fileWriter
+        ioService.getFileWriter _ when fileName returns fileWriter
         fileWriter.writeLines _ expects *
+
+        val file = new WritableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         file.isOpen should equal (false)
 
@@ -176,11 +175,11 @@ class DataFileImplSpec extends FlatSpec with Matchers with MockFactory {
     }
 
     it should "throw an IllegalStateException if called twice" in {
-        val file = new WritableIntDataFileImpl(LocalDate.of(2015, 5, 14))
-
         val fileWriter = mock[FileWriter]
-        file.fileWriter = fileWriter
+        ioService.getFileWriter _ when fileName returns fileWriter
         fileWriter.writeLines _ expects *
+
+        val file = new WritableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         //First Try
         file.writeData(Stream(1, 2, 3, 4))
@@ -189,11 +188,11 @@ class DataFileImplSpec extends FlatSpec with Matchers with MockFactory {
     }
 
     "Writer.close" should "call the close function of the fileWriter if called" in {
-        val file = new WritableIntDataFileImpl(LocalDate.of(2015, 5, 14))
-
         val fileWriter = mock[FileWriter]
-        file.fileWriter = fileWriter
+        ioService.getFileWriter _ when fileName returns fileWriter
         fileWriter.close _ expects()
+
+        val file = new WritableIntDataFileImpl(LocalDate.of(2015, 5, 14))
 
         file.close()
     }

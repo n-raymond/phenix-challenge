@@ -4,6 +4,7 @@ import java.time.LocalDate
 
 import phenix.dataFiles.general.{DataFileImpl, ReadableDataFileImpl, WritableDataFileImpl}
 import phenix.dataFiles.general.DataFileImpl.LocatedInResult
+import phenix.io.IOService
 import phenix.models.ProductQuantity
 
 
@@ -13,8 +14,8 @@ import phenix.models.ProductQuantity
   * @param productId The id of the product
   * @param date The date of the DatedDataFile
   */
-class ProductQuantityFile(val productId: Int, date: LocalDate)
-    extends DataFileImpl[ProductQuantity](date)
+class ProductQuantityFile(val productId: Int, date: LocalDate, ioService: IOService)
+    extends DataFileImpl[ProductQuantity](date, ioService)
         with LocatedInResult[ProductQuantity] {
 
     /** @inheritdoc */
@@ -33,12 +34,12 @@ class ProductQuantityFile(val productId: Int, date: LocalDate)
 
 object ProductQuantityFile {
 
-    class Reader(productId: Int, date: LocalDate)
-        extends ProductQuantityFile(productId, date)
+    class Reader(productId: Int, date: LocalDate, ioService: IOService)
+        extends ProductQuantityFile(productId, date, ioService)
             with ReadableDataFileImpl[ProductQuantity]
 
-    class Writer(productId: Int, date: LocalDate)
-        extends ProductQuantityFile(productId, date)
+    class Writer(productId: Int, date: LocalDate, ioService: IOService)
+        extends ProductQuantityFile(productId, date, ioService)
             with WritableDataFileImpl[ProductQuantity]
 
 }

@@ -21,12 +21,3 @@ trait FileReader extends AutoCloseable {
     override def close(): Unit
 
 }
-
-object FileReader {
-
-    /**
-      * A factory to get the default FileReader.
-      */
-    def apply(fileName: String) : FileReader = new BufferedSourceAdapter(fileName)
-}
-

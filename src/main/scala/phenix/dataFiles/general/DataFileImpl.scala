@@ -4,6 +4,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import com.typesafe.config.ConfigFactory
+import phenix.io.IOService
 
 
 /**
@@ -14,7 +15,8 @@ import com.typesafe.config.ConfigFactory
   * @param date           The date of the file
   */
 abstract class DataFileImpl[Data](
-    val date: LocalDate
+    val date: LocalDate,
+    val ioService: IOService
 ) extends DataFile[Data] {
 
     /**

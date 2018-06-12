@@ -23,13 +23,3 @@ trait FileWriter extends AutoCloseable {
     override def close(): Unit
 
 }
-
-
-object FileWriter {
-
-    /**
-      * A factory to get the default FileWriter.
-      */
-    def apply(fileName: String) : FileWriter = new PrintWriterAdapter(fileName)
-}
-

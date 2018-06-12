@@ -12,7 +12,7 @@ class PrintWriterAdapter(val fileName: String) extends FileWriter with AutoClose
 
     /** @inheritdoc */
     override def writeLines(lines: Iterable[String]): Unit = {
-        lines foreach (printWriter.println(_))
+        lines foreach printWriter.println
     }
 
     /** @inheritdoc */

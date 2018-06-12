@@ -4,14 +4,15 @@ import java.time.LocalDate
 
 import phenix.dataFiles.general.{DataFileImpl, ReadableDataFileImpl}
 import phenix.dataFiles.general.DataFileImpl.LocatedInDataImpl
+import phenix.io.IOService
 import phenix.models.Transaction
 
 /**
   * A helper to manage files containing a transactions.
   * @param date The date of the DatedDataFile
   */
-class TransactionFileReader(date: LocalDate)
-    extends DataFileImpl[Transaction](date)
+class TransactionFileReader(date: LocalDate, ioService: IOService)
+    extends DataFileImpl[Transaction](date, ioService)
         with ReadableDataFileImpl[Transaction]
         with LocatedInDataImpl[Transaction] {
 
