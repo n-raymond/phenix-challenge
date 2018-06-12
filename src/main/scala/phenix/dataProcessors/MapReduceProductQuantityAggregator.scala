@@ -2,7 +2,7 @@ package phenix.dataProcessors
 
 import java.time.LocalDate
 
-import phenix.dataFiles.{DataFileFactory, ReadableDataFile}
+import phenix.dataFiles.{DataFileService, ReadableDataFile}
 import phenix.models.{ProductQuantity, Transaction}
 import phenix.utils.ResourceCloseable
 import com.typesafe.config.ConfigFactory
@@ -10,7 +10,7 @@ import com.typesafe.config.ConfigFactory
 import scala.util.{Failure, Success, Try}
 import scala.collection.immutable.Map
 
-class MapReduceProductQuantityAggregator(dataFileFactory: DataFileFactory)
+class MapReduceProductQuantityAggregator(dataFileFactory: DataFileService)
     extends ProductQuantityAggregeable with ResourceCloseable {
 
     private val conf = ConfigFactory.load()

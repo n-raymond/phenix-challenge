@@ -7,7 +7,7 @@ import phenix.models.ProductQuantity
 
 
 /**
-  * A helper to manage intermediates files quantity of a product.
+  * A helper to manage intermediates files containing quantity of a product.
   * Those files will be used as a pre-computing of a product quantity file.
   *
   * @param productId The id of the product

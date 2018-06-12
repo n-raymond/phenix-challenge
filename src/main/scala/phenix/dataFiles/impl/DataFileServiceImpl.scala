@@ -6,7 +6,7 @@ import phenix.dataFiles._
 import phenix.dataFiles.impl.specifics.{IntermediateProductQuantityFile, ProductQuantityFile}
 import phenix.models.ProductQuantity
 
-class DataFileFactoryImpl extends DataFileFactory {
+class DataFileServiceImpl extends DataFileService {
 
     /** @inheritdoc */
     override def getProductQuantityReader(productId: Int, date: LocalDate): ReadableDataFile[ProductQuantity] = {
@@ -27,4 +27,5 @@ class DataFileFactoryImpl extends DataFileFactory {
     override def getInterProductQuantityWriter(productId: Int, groupId: Int, date: LocalDate): WritableDataFile[ProductQuantity] = {
         new IntermediateProductQuantityFile.Writer(productId, groupId, date)
     }
+
 }

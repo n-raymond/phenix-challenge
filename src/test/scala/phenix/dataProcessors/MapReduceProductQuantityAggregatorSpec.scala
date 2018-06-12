@@ -3,7 +3,7 @@ package phenix.dataProcessors
 import java.util.UUID
 
 import org.scalatest.{FlatSpec, Matchers}
-import phenix.dataFiles.impl.DataFileFactoryImpl
+import phenix.dataFiles.impl.DataFileServiceImpl
 import phenix.models.{ProductQuantity, Transaction}
 
 import scala.collection.SortedMap
@@ -11,7 +11,7 @@ import scala.util.{Failure, Success}
 
 class MapReduceProductQuantityAggregatorSpec extends FlatSpec with Matchers {
 
-    val dataFileFactory = new DataFileFactoryImpl
+    val dataFileFactory = new DataFileServiceImpl
     val productQuantityAggregator = new MapReduceProductQuantityAggregator(dataFileFactory)
 
     "aggregateProductsByShop" should "succeed to aggregate the transactions by shop" in {
