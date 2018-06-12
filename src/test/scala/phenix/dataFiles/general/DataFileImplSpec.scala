@@ -1,11 +1,13 @@
-package phenix.dataFiles.impl
+package phenix.dataFiles.general
 
 import java.time.LocalDate
 
 import com.typesafe.config.ConfigFactory
 import org.scalamock.scalatest.MockFactory
 import org.scalatest._
-import phenix.io.{FileReader, FileWriter}
+import phenix.dataFiles.general.{DataFileImpl, ReadableDataFileImpl, WritableDataFileImpl}
+import phenix.io.reader.FileReader
+import phenix.io.writer.FileWriter
 
 import scala.util.{Failure, Success}
 

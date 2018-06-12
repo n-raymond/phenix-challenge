@@ -1,6 +1,6 @@
 package phenix.dataProcessors
 
-import phenix.dataFiles.ReadableDataFile
+import phenix.dataFiles.general.ReadableDataFile
 import phenix.models.{ProductQuantity, Transaction}
 
 

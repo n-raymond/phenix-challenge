@@ -1,4 +1,4 @@
-package phenix.io
+package phenix.io.writer
 
 import org.scalatest.{FlatSpec, Matchers}
 

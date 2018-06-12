@@ -3,6 +3,7 @@ package phenix.dataFiles
 import java.time.LocalDate
 
 import com.typesafe.config.ConfigFactory
+import phenix.dataFiles.general.{ReadableDataFile, WritableDataFile}
 import phenix.models.ProductQuantity
 /**
   * A service containing several factories to produce several kinds

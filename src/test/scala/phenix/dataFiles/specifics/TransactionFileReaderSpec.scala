@@ -1,4 +1,4 @@
-package phenix.dataFiles.impl.specifics
+package phenix.dataFiles.specifics
 
 import java.time.LocalDate
 import java.util.UUID
@@ -6,7 +6,7 @@ import java.util.UUID
 import com.typesafe.config.ConfigFactory
 import org.scalamock.scalatest.MockFactory
 import org.scalatest._
-import phenix.io.FileReader
+import phenix.io.reader.FileReader
 import phenix.models.Transaction
 
 import scala.util.Success

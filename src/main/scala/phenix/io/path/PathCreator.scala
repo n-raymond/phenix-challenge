@@ -1,8 +1,7 @@
-package phenix.io
+package phenix.io.path
 
-import java.nio.file.Paths
 import java.io.IOException
-import java.nio.file.Files
+import java.nio.file.{Files, Paths}
 
 /**
   * Regroups functionalities to generate or remove paths

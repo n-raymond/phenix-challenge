@@ -2,8 +2,8 @@ package phenix.app
 
 import java.time.LocalDate
 
-import phenix.dataFiles.impl.DataFileServiceImpl
-import phenix.dataFiles.impl.specifics.TransactionFileReader
+import phenix.dataFiles.DataFileServiceImpl
+import phenix.dataFiles.specifics.TransactionFileReader
 import phenix.dataProcessors.MapReduceProductQuantityAggregator
 
 object PhenixApp extends App {

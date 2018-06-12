@@ -1,7 +1,6 @@
-package phenix.dataFiles.impl
+package phenix.dataFiles.general
 
-import phenix.dataFiles.ReadableDataFile
-import phenix.io.FileReader
+import phenix.io.reader.FileReader
 
 import scala.util.Try
 

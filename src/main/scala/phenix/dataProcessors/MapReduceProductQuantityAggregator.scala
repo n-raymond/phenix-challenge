@@ -2,10 +2,11 @@ package phenix.dataProcessors
 
 import java.time.LocalDate
 
-import phenix.dataFiles.{DataFileService, ReadableDataFile}
+import phenix.dataFiles.DataFileService
 import phenix.models.{ProductQuantity, Transaction}
 import phenix.utils.ResourceCloseable
 import com.typesafe.config.ConfigFactory
+import phenix.dataFiles.general.ReadableDataFile
 
 import scala.util.{Failure, Success, Try}
 import scala.collection.immutable.Map

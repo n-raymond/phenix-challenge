@@ -1,11 +1,9 @@
-package phenix.dataFiles.impl
+package phenix.dataFiles.general
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import com.typesafe.config.ConfigFactory
-import phenix.dataFiles.DataFile
-import phenix.utils.CamelCaseToUnderscore
 
 
 /**
@@ -17,7 +15,7 @@ import phenix.utils.CamelCaseToUnderscore
   */
 abstract class DataFileImpl[Data](
     val date: LocalDate
-) extends DataFile[Data] with CamelCaseToUnderscore {
+) extends DataFile[Data] {
 
     /**
      * Computes the prefix of the fileName. The file's date will be appended

@@ -1,4 +1,4 @@
-package phenix.dataFiles
+package phenix.dataFiles.general
 
 import java.io.{FileNotFoundException, IOException}
 

@@ -1,9 +1,9 @@
-package phenix.dataFiles.impl
+package phenix.dataFiles
 
 import java.time.LocalDate
 
-import phenix.dataFiles._
-import phenix.dataFiles.impl.specifics.{IntermediateProductQuantityFile, ProductQuantityFile}
+import phenix.dataFiles.general.{ReadableDataFile, WritableDataFile}
+import phenix.dataFiles.specifics.{IntermediateProductQuantityFile, ProductQuantityFile}
 import phenix.models.ProductQuantity
 
 class DataFileServiceImpl extends DataFileService {

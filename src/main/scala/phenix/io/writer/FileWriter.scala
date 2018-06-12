@@ -1,5 +1,5 @@
 
-package phenix.io
+package phenix.io.writer
 
 import java.io.IOException
 

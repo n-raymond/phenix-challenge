@@ -1,6 +1,6 @@
-package phenix.io
+package phenix.io.writer
 
-import java.io.{FileWriter => FW, BufferedWriter, PrintWriter}
+import java.io.{BufferedWriter, PrintWriter, FileWriter => FW}
 
 
 

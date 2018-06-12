@@ -1,8 +1,8 @@
-package phenix.dataFiles.impl.specifics
+package phenix.dataFiles.specifics
 
 import java.time.LocalDate
 
-import phenix.dataFiles.impl.{ReadableDataFileImpl, WritableDataFileImpl}
+import phenix.dataFiles.general.{ReadableDataFileImpl, WritableDataFileImpl}
 import phenix.models.ProductQuantity
 
 

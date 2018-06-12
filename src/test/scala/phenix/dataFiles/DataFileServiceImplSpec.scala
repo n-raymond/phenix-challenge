@@ -1,10 +1,10 @@
-package phenix.dataFiles.impl
+package phenix.dataFiles
 
 import java.time.LocalDate
 
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
-import phenix.dataFiles.impl.specifics.{IntermediateProductQuantityFile, ProductQuantityFile}
+import phenix.dataFiles.specifics.{IntermediateProductQuantityFile, ProductQuantityFile}
 
 class DataFileServiceImplSpec extends FlatSpec with Matchers with MockFactory {
 

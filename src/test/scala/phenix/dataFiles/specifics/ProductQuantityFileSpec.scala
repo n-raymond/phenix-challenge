@@ -1,4 +1,4 @@
-package phenix.dataFiles.impl.specifics
+package phenix.dataFiles.specifics
 
 import java.time.LocalDate
 import java.util.UUID
@@ -6,23 +6,24 @@ import java.util.UUID
 import com.typesafe.config.ConfigFactory
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
-import phenix.io.{FileReader, FileWriter}
+import phenix.io.reader.FileReader
+import phenix.io.writer.FileWriter
 import phenix.models.ProductQuantity
 
 import scala.util.Success
 
-class IntermediateProductQuantityFileSpec extends FlatSpec with Matchers with MockFactory {
+class ProductQuantityFileSpec extends FlatSpec with Matchers with MockFactory {
 
     private val conf = ConfigFactory.load()
 
     "fileName" should "return a valid file name" in {
-        val file = new IntermediateProductQuantityFile(37, 14, LocalDate.of(2015, 5, 14))
+        val file = new ProductQuantityFile(37, LocalDate.of(2015, 5, 14))
 
-        file.fileName should equal (s"${conf.getString("paths.result")}/product_quantity/inter/intermediate_product_qty_37_14_20150514.data")
+        file.fileName should equal (s"${conf.getString("paths.result")}/product_quantity/product_qty_37_20150514.data")
     }
 
     "ProductQuantityFile.Reader" should "be able to read data from file" in {
-        val file = new IntermediateProductQuantityFile.Reader(37, 14, LocalDate.of(2015, 5, 14))
+        val file = new ProductQuantityFile.Reader(37, LocalDate.of(2015, 5, 14))
 
         val fileData = Iterator(
             "72a2876c-bc8b-4f35-8882-8d661fac2606|652",
@@ -44,7 +45,7 @@ class IntermediateProductQuantityFileSpec extends FlatSpec with Matchers with Mo
     }
 
     "ProductQuantityFile.Writer" should "be able to write data to file" in {
-        val file = new IntermediateProductQuantityFile.Writer(37, 14, LocalDate.of(2015, 5, 14))
+        val file = new ProductQuantityFile.Writer(37, LocalDate.of(2015, 5, 14))
 
         val expected = Iterable(
             "72a2876c-bc8b-4f35-8882-8d661fac2606|652",
@@ -63,6 +64,14 @@ class IntermediateProductQuantityFileSpec extends FlatSpec with Matchers with Mo
         fileWriter.writeLines _ expects expected
 
         file.writeData(data)
+    }
+
+
+    "serialiseData" should "well serialize a ProductQuantity" in {
+        val file = new ProductQuantityFile(1, LocalDate.of(2015, 5, 14))
+        val result = file.serializeData(ProductQuantity(UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 531))
+
+        result should equal ("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71|531")
     }
 
 

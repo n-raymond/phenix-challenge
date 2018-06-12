@@ -1,9 +1,9 @@
-package phenix.dataFiles.impl.specifics
+package phenix.dataFiles.specifics
 
 import java.time.LocalDate
 
-import phenix.dataFiles.impl.DataFileImpl.LocatedInDataImpl
-import phenix.dataFiles.impl.{DataFileImpl, ReadableDataFileImpl}
+import phenix.dataFiles.general.{DataFileImpl, ReadableDataFileImpl}
+import phenix.dataFiles.general.DataFileImpl.LocatedInDataImpl
 import phenix.models.Transaction
 
 /**

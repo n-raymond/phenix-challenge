@@ -1,7 +1,7 @@
-package phenix.dataFiles.impl
+package phenix.dataFiles.general
 
-import phenix.dataFiles.WritableDataFile
-import phenix.io.{FileWriter, PathCreator}
+import phenix.io.path.PathCreator
+import phenix.io.writer.FileWriter
 
 /**
   * Adds helping functionalities to write data on the DatedDataFile.

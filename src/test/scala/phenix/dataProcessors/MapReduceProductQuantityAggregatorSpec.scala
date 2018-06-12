@@ -3,7 +3,7 @@ package phenix.dataProcessors
 import java.util.UUID
 
 import org.scalatest.{FlatSpec, Matchers}
-import phenix.dataFiles.impl.DataFileServiceImpl
+import phenix.dataFiles.DataFileServiceImpl
 import phenix.models.{ProductQuantity, Transaction}
 
 import scala.collection.SortedMap
