@@ -4,13 +4,23 @@ import java.time.LocalDate
 
 import com.typesafe.config.ConfigFactory
 import phenix.dataFiles.general.{ReadableDataFile, WritableDataFile}
-import phenix.models.ProductQuantity
+import phenix.models.{ProductQuantity, Transaction}
 
 /**
   * A service containing several factories to produce several kinds
   * of DataFile.
   */
 trait DataFileService {
+
+    /* Transaction */
+
+    /**
+      * A factory generating a ReadableDataFile of Transaction.
+      *
+      * @param date      The date of the file
+      * @return          A ReadableDataFile of Transaction
+      */
+    def getTransactionReader(date: LocalDate): ReadableDataFile[Transaction]
 
 
     /* ProductQuantity */

@@ -6,7 +6,7 @@ import java.util.UUID
 import com.typesafe.config.ConfigFactory
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
-import phenix.io.{IOService, IOServiceImpl}
+import phenix.io.IOService
 import phenix.io.reader.FileReader
 import phenix.io.writer.FileWriter
 import phenix.models.ProductQuantity
