@@ -1,10 +1,10 @@
 package phenix.dataFiles.general
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 import com.typesafe.config.ConfigFactory
 import phenix.io.IOService
+import phenix.utils.DateSerializer
 
 
 /**
@@ -17,7 +17,8 @@ import phenix.io.IOService
 abstract class DataFileImpl[Data](
     val date: LocalDate,
     val ioService: IOService
-) extends DataFile[Data] {
+) extends DataFile[Data]
+    with DateSerializer {
 
     /**
      * Computes the prefix of the fileName. The file's date will be appended
@@ -29,7 +30,7 @@ abstract class DataFileImpl[Data](
 
     /** @inheritdoc */
     override def fileName : String = {
-        s"$fileLocation/${fileNamePrefix}_${date.format(DataFileImpl.fileNameDateFormatter)}.data"
+        s"$fileLocation/${fileNamePrefix}_${stringOfDate(date)}.data"
     }
 
 }
@@ -40,11 +41,6 @@ object DataFileImpl {
       * The application configuration
       */
     private val conf = ConfigFactory.load()
-
-    /**
-      * A DateFormatter used to generate the postfix part of the filename
-      */
-    private val fileNameDateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
 
     /**
      * Adds the location of files that are initial data.

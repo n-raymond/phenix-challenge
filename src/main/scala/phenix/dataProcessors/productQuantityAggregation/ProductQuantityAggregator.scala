@@ -1,14 +1,14 @@
-package phenix.dataProcessors
+package phenix.dataProcessors.productQuantityAggregation
 
 import phenix.dataFiles.general.ReadableDataFile
 import phenix.models.{ProductQuantity, Transaction}
 
 
 /**
-  * A ProductQuantityAggregator offer a way to process transaction
+  * Offers a way to process transaction
   * and aggregate the sum of each sold product into ProductQuantityFiles
   */
-trait ProductQuantityAggregeable {
+trait ProductQuantityAggregator {
 
     def aggregate(transactionFileReader: ReadableDataFile[Transaction]) : Iterable[ReadableDataFile[ProductQuantity]]
 

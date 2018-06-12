@@ -8,7 +8,7 @@ import phenix.models.exceptions.DeserializationException
   * Represents a quantity of a product that was sold (someday) in
   * a specific shop.
   */
-case class ProductQuantity(shop: UUID, quantity: Int) extends {
+case class ProductQuantity(shop: UUID, quantity: Int) {
 
     override def toString: String = s"${shop}|${quantity}"
 

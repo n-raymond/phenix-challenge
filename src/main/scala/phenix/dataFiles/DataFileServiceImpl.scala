@@ -1,11 +1,12 @@
 package phenix.dataFiles
 
 import java.time.LocalDate
+import java.util.UUID
 
 import phenix.dataFiles.general.{ReadableDataFile, WritableDataFile}
-import phenix.dataFiles.specifics.{IntermediateProductQuantityFile, ProductQuantityFile, TransactionFileReader}
+import phenix.dataFiles.specifics._
 import phenix.io.IOService
-import phenix.models.{ProductQuantity, Transaction}
+import phenix.models.{ProductQuantity, ProductValue, Transaction}
 
 class DataFileServiceImpl(ioService: IOService) extends DataFileService {
 
@@ -34,4 +35,23 @@ class DataFileServiceImpl(ioService: IOService) extends DataFileService {
         new IntermediateProductQuantityFile.Writer(productId, groupId, date, ioService)
     }
 
+    /** @inheritdoc */
+    override def getShopTopSellsReader(shop: UUID, date: LocalDate): ReadableDataFile[ProductValue] = {
+        new ShopTopSellsFile.Reader(shop, date, ioService)
+    }
+
+    /** @inheritdoc */
+    override def getShopTopSellsWriter(shop: UUID, date: LocalDate): WritableDataFile[ProductValue] = {
+        new ShopTopSellsFile.Writer(shop, date, ioService)
+    }
+
+    /** @inheritdoc */
+    override def getIntermediateShopTopSellsReader(shop: UUID, group: Int, date: LocalDate): ReadableDataFile[ProductValue] = {
+        new IntermediateShopToSellsFile.Reader(shop, group, date, ioService)
+    }
+
+    /** @inheritdoc */
+    override def getIntermediateShopTopSellsWriter(shop: UUID, group: Int, date: LocalDate): WritableDataFile[ProductValue] = {
+        new IntermediateShopToSellsFile.Writer(shop, group, date, ioService)
+    }
 }

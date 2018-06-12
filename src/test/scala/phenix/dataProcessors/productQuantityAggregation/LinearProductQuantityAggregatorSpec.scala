@@ -1,20 +1,19 @@
-package phenix.dataProcessors
+package phenix.dataProcessors.productQuantityAggregation
 
 import java.util.UUID
 
+import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
-import phenix.dataFiles.DataFileServiceImpl
-import phenix.io.{IOService, IOServiceImpl}
+import phenix.dataFiles.DataFileService
 import phenix.models.{ProductQuantity, Transaction}
 
 import scala.collection.SortedMap
 import scala.util.{Failure, Success}
 
-class MapReduceProductQuantityAggregatorSpec extends FlatSpec with Matchers {
+class LinearProductQuantityAggregatorSpec extends FlatSpec with Matchers with MockFactory {
 
-    val ioService = new IOServiceImpl
-    val dataFileFactory = new DataFileServiceImpl(ioService)
-    val productQuantityAggregator = new MapReduceProductQuantityAggregator(dataFileFactory)
+    private val dataFileService = stub[DataFileService]
+    private val productQuantityAggregator = new LinearProductQuantityAggregator(dataFileService)
 
     "aggregateProductsByShop" should "succeed to aggregate the transactions by shop" in {
 
@@ -81,25 +80,6 @@ class MapReduceProductQuantityAggregatorSpec extends FlatSpec with Matchers {
                 ProductQuantity(UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 7)
             ).toList.sortBy(_.shop)
         )
-
-        result should equal (expected)
-    }
-
-    "filterSuccessValues" should "keep only successful values without throwing an IllegalStateException" in {
-        val initialValues = Iterable(
-            Success(3),
-            Success(10),
-            Success(11),
-            Failure(new Exception("Mouahahah ! You failed !")),
-            Success(385),
-            Success(75),
-            Failure(new Exception("Mouahahah ! You failed !")),
-            Success(76)
-        )
-
-        val result = productQuantityAggregator.filterSuccessValues(initialValues)
-
-        val expected = Iterable(3, 10, 11, 385, 75, 76)
 
         result should equal (expected)
     }

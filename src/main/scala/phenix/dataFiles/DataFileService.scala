@@ -1,10 +1,10 @@
 package phenix.dataFiles
 
 import java.time.LocalDate
+import java.util.UUID
 
-import com.typesafe.config.ConfigFactory
 import phenix.dataFiles.general.{ReadableDataFile, WritableDataFile}
-import phenix.models.{ProductQuantity, Transaction}
+import phenix.models.{ProductQuantity, ProductValue, Transaction}
 
 /**
   * A service containing several factories to produce several kinds
@@ -65,5 +65,48 @@ trait DataFileService {
       * @return          A WritableDataFile of ProductQuantity
       */
     def getInterProductQuantityWriter(productId: Int, groupId: Int, date: LocalDate): WritableDataFile[ProductQuantity]
+
+
+    /* ShopTopSellsFile */
+
+    /**
+      * A factory generating a shop top sells file reader.
+      *
+      * @param shop The shop id
+      * @param date The date of the file
+      * @return     An intermediate ReadableDataFile of ProductQuantity
+      */
+    def getShopTopSellsReader(shop: UUID, date: LocalDate): ReadableDataFile[ProductValue]
+
+    /**
+      * A factory generating a shop top sells file writer.
+      *
+      * @param shop The shop id
+      * @param date The date of the file
+      * @return     An intermediate ReadableDataFile of ProductQuantity
+      */
+    def getShopTopSellsWriter(shop: UUID, date: LocalDate): WritableDataFile[ProductValue]
+
+
+
+    /* IntermediateShopTopSellsFile */
+
+    /**
+      * A factory generating an intermediate shop top sells file reader.
+      *
+      * @param shop The shop id
+      * @param date The date of the file
+      * @return     An intermediate ReadableDataFile of ProductQuantity
+      */
+    def getIntermediateShopTopSellsReader(shop: UUID, groupId: Int, date: LocalDate): ReadableDataFile[ProductValue]
+
+    /**
+      * A factory generating an intermediate shop top sells file writer.
+      *
+      * @param shop The shop id
+      * @param date The date of the file
+      * @return     An intermediate ReadableDataFile of ProductQuantity
+      */
+    def getIntermediateShopTopSellsWriter(shop: UUID, groupId: Int, date: LocalDate): WritableDataFile[ProductValue]
 
 }
