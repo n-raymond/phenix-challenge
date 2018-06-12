@@ -66,4 +66,12 @@ class ProductQuantityFileSpec extends FlatSpec with Matchers with MockFactory {
     }
 
 
+    "serialiseData" should "well serialize a ProductQuantity" in {
+        val file = new ProductQuantityFile(1, LocalDate.of(2015, 5, 14))
+        val result = file.serializeData(ProductQuantity(UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 531))
+
+        result should equal ("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71|531")
+    }
+
+
 }
