@@ -3,6 +3,7 @@ import java.time.LocalDate
 import java.util.UUID
 
 import com.typesafe.config.ConfigFactory
+import com.typesafe.scalalogging.LazyLogging
 import phenix.dataFiles.DataFileService
 import phenix.dataFiles.general.ReadableDataFile
 import phenix.models.{ProductQuantity, ProductValue}
@@ -11,7 +12,8 @@ import phenix.utils.{ResourceCloseable, SuccessFilter}
 class LinearTopSalesAggregator(dataFileService: DataFileService)
     extends TopSalesAggregator
         with ResourceCloseable
-        with SuccessFilter {
+        with SuccessFilter
+        with LazyLogging {
 
     private val conf = ConfigFactory.load()
 
@@ -93,7 +95,10 @@ class LinearTopSalesAggregator(dataFileService: DataFileService)
         def merged = (a ++ b).groupBy (_._1)
 
         merged map { case (uuid, files) =>
-            val data = files.flatMap { case (_, reader) => tryWith(reader) (_.getContent) }
+            val data = files.flatMap {
+                case (_, reader) =>
+                    tryWith(reader) { _.getContent.toList }
+            }
             val processedData = retrieveTop100(filterSuccessValues(data))
             tryWith(dataFileService.getShopTopSellsWriter(uuid, date)) {
                 _.writeData(processedData)

@@ -10,6 +10,11 @@ import phenix.models.{ProductQuantity, Transaction}
   */
 trait ProductQuantityAggregator {
 
-    def aggregate(transactionFileReader: ReadableDataFile[Transaction]) : Iterable[ReadableDataFile[ProductQuantity]]
+    /**
+      *
+      * @param transactionFileReader
+      * @return
+      */
+    def aggregate(transactionFileReader: ReadableDataFile[Transaction]) : Iterable[(Int, ReadableDataFile[ProductQuantity])]
 
 }
