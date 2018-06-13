@@ -61,36 +61,32 @@ class LinearTopSalesAggregatorSpec extends FlatSpec with Matchers with MockFacto
         /* Iterable 1 */
 
         val uuidA = UUID.fromString("d4bfbabf-0160-4e87-8688-78e0943a396a")
-        val fileA1 = stub[ReadableDataFile[ProductValue]]
+        val fileA1 = mock[ReadableDataFile[ProductValue]]
         val contentA1 = Stream(
             Success(new ProductValue(7, 8)),
             Success(new ProductValue(6, 1)),
             Success(new ProductValue(1,2))
         )
-        fileA1.getContent _ when() returns contentA1
-        fileA1.date _ when() returns date
 
         val uuidB = UUID.fromString("af068240-8198-4b79-9cf9-c28c0db65f63")
-        val fileB = stub[ReadableDataFile[ProductValue]]
+        val fileB = mock[ReadableDataFile[ProductValue]]
         val contentB = Stream(Success(new ProductValue(1, 3)))
-        fileB.getContent _ when() returns contentB
 
         val iterable1 = Iterable((uuidA, fileA1), (uuidB, fileB))
 
         /* Iterable 2 */
 
-        val fileA2 = stub[ReadableDataFile[ProductValue]]
+        val fileA2 = mock[ReadableDataFile[ProductValue]]
         val contentA2 = Stream(
             Success(new ProductValue(10, 4)),
             Success(new ProductValue(5, 3)),
             Success(new ProductValue(3,5))
         )
-        fileA2.getContent _ when() returns contentA2
+
 
         val uuidC = UUID.fromString("bdc2a431-797d-4b07-9567-67c565a67b84")
-        val fileC = stub[ReadableDataFile[ProductValue]]
+        val fileC = mock[ReadableDataFile[ProductValue]]
         val contentC = Stream(Success(new ProductValue(7, 3)))
-        fileC.getContent _ when() returns contentC
 
         val iterable2 = Iterable((uuidA, fileA2), (uuidC, fileC))
 
@@ -121,16 +117,28 @@ class LinearTopSalesAggregatorSpec extends FlatSpec with Matchers with MockFacto
         /* Expectations */
 
         inSequenceWithLogging {
+            fileA1.date _ expects() returning date
+            inAnyOrderWithLogging{
+                fileA1.getContent _ expects() returning contentA1
+                fileA1.close _ expects()
+
+                fileA2.getContent _ expects() returning contentA2
+                fileA2.close _ expects()
+            }
             dataFileService.getShopTopSellsWriter _ expects (uuidA, date) returning writerA
             writerA.writeData _ expects contentWriterA
             writerA.close _ expects()
             dataFileService.getShopTopSellsReader _ expects (uuidA, date) returning readerA
 
+            fileB.getContent _ expects() returning contentB
+            fileB.close _ expects()
             dataFileService.getShopTopSellsWriter _ expects (uuidB, date) returning writerB
             writerB.writeData _ expects contentWriterB
             writerB.close _ expects()
             dataFileService.getShopTopSellsReader _ expects (uuidB, date) returning readerB
 
+            fileC.getContent _ expects() returning contentC
+            fileC.close _ expects()
             dataFileService.getShopTopSellsWriter _ expects (uuidC, date) returning writerC
             writerC.writeData _ expects contentWriterC
             writerC.close _ expects()

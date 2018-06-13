@@ -88,11 +88,12 @@ class LinearTopSalesAggregator(dataFileService: DataFileService)
     }
 
     def reducer(a: Iterable[(UUID, ReadableDataFile[ProductValue])], b: Iterable[(UUID, ReadableDataFile[ProductValue])]) : Iterable[(UUID, ReadableDataFile[ProductValue])] = {
+
+        val date = retrieveDateInFirstFile(a)
         def merged = (a ++ b).groupBy (_._1)
-        def date = retrieveDateInFirstFile(a)
 
         merged map { case (uuid, files) =>
-            val data = files.flatMap(_._2.getContent)
+            val data = files.flatMap { case (_, reader) => tryWith(reader) (_.getContent) }
             val processedData = retrieveTop100(filterSuccessValues(data))
             tryWith(dataFileService.getShopTopSellsWriter(uuid, date)) {
                 _.writeData(processedData)
