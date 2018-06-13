@@ -56,7 +56,7 @@ class LinearTopSalesAggregator(dataFileService: DataFileService)
         }
 
         aggregations map { case (shop, productValues) =>
-            val sorted = productValues.sortBy(- _.value)
+            val sorted = retrieveTop100(productValues)
 
             tryWith(dataFileService.getIntermediateShopTopSellsWriter(shop, groupId, date)) {
                 _.writeData(sorted)
@@ -66,14 +66,7 @@ class LinearTopSalesAggregator(dataFileService: DataFileService)
         }
     }
 
-    /**
-      * Get the date of the first file in the list
-      * @param fileGroup the list
-      * @return a local date
-      */
-    def retrieveDateInFirstFile(fileGroup: Iterable[(Int, ReadableDataFile[ProductQuantity])]): LocalDate = {
-        fileGroup.head._2.date
-    }
+
 
     /**
       * Takes an Iterable of ProductQuantity, aggregate them by shop, and add this aggregation to the given map.
@@ -82,7 +75,11 @@ class LinearTopSalesAggregator(dataFileService: DataFileService)
       * @param map The map in which must be added the resulting product values
       * @return The resulting map with the fresh aggregation
       */
-    def aggregateProductQuantitiesByShop(productQuantities: Iterable[ProductQuantity], productId: Int, map: Map[UUID, List[ProductValue]]) = {
+    def aggregateProductQuantitiesByShop(
+                                            productQuantities: Iterable[ProductQuantity],
+                                            productId: Int,
+                                            map: Map[UUID, List[ProductValue]]
+                                        ): Map[UUID, List[ProductValue]] = {
         (map /: productQuantities) {
             case (acc, productQty) =>
                 val list = acc.getOrElse(productQty.shop, List())
@@ -91,13 +88,31 @@ class LinearTopSalesAggregator(dataFileService: DataFileService)
     }
 
     def reducer(a: Iterable[(UUID, ReadableDataFile[ProductValue])], b: Iterable[(UUID, ReadableDataFile[ProductValue])]) : Iterable[(UUID, ReadableDataFile[ProductValue])] = {
-        a.toMap ++ b.toMap.map { case (shop, f) =>
+        def merged = (a ++ b).groupBy (_._1)
+        def date = retrieveDateInFirstFile(a)
 
-
+        merged map { case (uuid, files) =>
+            val data = files.flatMap(_._2.getContent)
+            val processedData = retrieveTop100(filterSuccessValues(data))
+            tryWith(dataFileService.getShopTopSellsWriter(uuid, date)) {
+                _.writeData(processedData)
+            }
+            (uuid, dataFileService.getShopTopSellsReader(uuid, date))
         }
-            map1 ++ map2.map{ case (k,v) => k -> (v + map1.getOrElse(k,0)) }
     }
 
-    def fusion
+    /**
+      * Get the date of the first file in the list
+      * @param fileGroup the list
+      * @return a local date
+      */
+    def retrieveDateInFirstFile(fileGroup: Iterable[(_, ReadableDataFile[_])]): LocalDate = {
+        fileGroup.head._2.date
+    }
+
+    def retrieveTop100(values: Iterable[ProductValue]): Iterable[ProductValue] = {
+        values.toList.sortBy(- _.value).take(100)
+    }
+
 
 }

@@ -6,7 +6,7 @@ import java.io.{BufferedWriter, PrintWriter, FileWriter => FW}
 
 class PrintWriterAdapter(val fileName: String) extends FileWriter with AutoCloseable {
 
-    private lazy val fileWriter = new FW(fileName, true)
+    private lazy val fileWriter = new FW(fileName, false)
     private lazy val bufferedWriter = new BufferedWriter(fileWriter)
     private lazy val printWriter = new PrintWriter(bufferedWriter)
 

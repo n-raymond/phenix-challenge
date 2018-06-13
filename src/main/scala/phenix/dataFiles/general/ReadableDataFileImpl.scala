@@ -42,8 +42,8 @@ trait ReadableDataFileImpl[Data] extends DataFileImpl[Data] with ReadableDataFil
     }
 
     /** @inheritdoc */
-    override def getChunks(chunkSize: Int) : Stream[(Int, Chunk)] = {
-        def partitioning(groups: Iterator[Chunk], offset: Int = 0): Stream[(Int, Chunk)] = {
+    override def getChunks(chunkSize: Int) : Stream[(Int, Stream[Try[Data]])] = {
+        def partitioning(groups: Iterator[Stream[Try[Data]]], offset: Int = 0): Stream[(Int, Stream[Try[Data]])] = {
             if(groups.hasNext) {
                 val group = groups.next
                 (offset, group) #:: partitioning(groups, offset + 1)
