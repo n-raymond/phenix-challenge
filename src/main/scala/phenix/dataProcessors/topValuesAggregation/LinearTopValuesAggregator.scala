@@ -1,4 +1,4 @@
-package phenix.dataProcessors.topSalesAggregation
+package phenix.dataProcessors.topValuesAggregation
 import java.time.LocalDate
 import java.util.UUID
 
@@ -9,8 +9,8 @@ import phenix.dataFiles.general.ReadableDataFile
 import phenix.models.{ProductQuantity, ProductValue}
 import phenix.utils.{ResourceCloseable, SuccessFilter}
 
-class LinearTopSalesAggregator(dataFileService: DataFileService)
-    extends TopSalesAggregator
+class LinearTopValuesAggregator(dataFileService: DataFileService)
+    extends TopValuesAggregator
         with ResourceCloseable
         with SuccessFilter
         with LazyLogging {

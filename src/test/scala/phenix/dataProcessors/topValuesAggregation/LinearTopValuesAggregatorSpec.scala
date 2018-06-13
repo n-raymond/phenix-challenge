@@ -1,4 +1,4 @@
-package phenix.dataProcessors.topSalesAggregation
+package phenix.dataProcessors.topValuesAggregation
 
 import java.time.LocalDate
 import java.util.UUID
@@ -11,7 +11,7 @@ import phenix.models.{ProductQuantity, ProductValue}
 
 import scala.util.Success
 
-class LinearTopSalesAggregatorSpec extends FlatSpec with Matchers with MockFactory {
+class LinearTopValuesAggregatorSpec extends FlatSpec with Matchers with MockFactory {
 
 
 
@@ -22,7 +22,7 @@ class LinearTopSalesAggregatorSpec extends FlatSpec with Matchers with MockFacto
     "aggregateProductQuantitiesByShop" should "return a map with the good new entries" in {
 
         val dataFileService = mock[DataFileService]
-        val topSalesAggregator = new LinearTopSalesAggregator(dataFileService)
+        val topSalesAggregator = new LinearTopValuesAggregator(dataFileService)
 
         val qties = Iterable(
             new ProductQuantity(UUID.fromString("bdc2a431-797d-4b07-9567-67c565a67b84"), 4),
@@ -54,7 +54,7 @@ class LinearTopSalesAggregatorSpec extends FlatSpec with Matchers with MockFacto
 
     "reducer" should "well merge the datafiles" in {
         val dataFileService = mock[DataFileService]
-        val topSalesAggregator = new LinearTopSalesAggregator(dataFileService)
+        val topSalesAggregator = new LinearTopValuesAggregator(dataFileService)
 
         val date = LocalDate.of(2017, 5, 4)
 

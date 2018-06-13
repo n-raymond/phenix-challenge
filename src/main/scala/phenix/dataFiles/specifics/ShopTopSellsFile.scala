@@ -31,7 +31,7 @@ class ShopTopSellsFile(val shop: UUID, date: LocalDate, ioService: IOService)
     override def serializeData(data: ProductValue): String = data.toString
 
     /** @inheritdoc */
-    override def fileLocation: String = s"${super.fileLocation}/top_100_ventes_${stringOfDate(date)}"
+    override def fileLocation: String = s"${super.fileLocation}/top_100_ventes"
 }
 
 
