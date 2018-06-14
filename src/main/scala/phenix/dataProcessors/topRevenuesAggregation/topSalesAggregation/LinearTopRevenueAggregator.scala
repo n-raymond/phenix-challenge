@@ -116,7 +116,7 @@ class LinearTopRevenueAggregator(dataFileService: DataFileService)
     }
 
     def retrieveTop100(values: Iterable[ProductPrice]): Iterable[ProductPrice] = {
-        values.toList.sortBy(- _.value).take(100)
+        values.toList.sortBy(- _.price).take(100)
     }
 
 

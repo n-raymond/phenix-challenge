@@ -1,6 +1,5 @@
 package phenix.dataFiles.general
 
-import phenix.io.path.PathCreator
 import phenix.io.writer.FileWriter
 
 /**
@@ -37,7 +36,7 @@ trait WritableDataFileImpl[Data] extends DataFileImpl[Data] with WritableDataFil
             throw new IllegalStateException("The file could be written only one time per reader.")
         }
         open = true
-        PathCreator.apply.createParentPathIfNotExist(fileName)
+        ioService.createParentPathIfNotExist(fileName)
         fileWriter.writeLines(lines map (_.toString))
     }
 }

@@ -5,9 +5,9 @@ import phenix.models.exceptions.DeserializationException
 /**
   * Associates a product to its price.
   */
-case class ProductPrice(product: Int, value: Double) {
+case class ProductPrice(product: Int, price: Double) {
 
-    override def toString: String = s"$product|$value"
+    override def toString: String = s"$product|$price"
 }
 
 

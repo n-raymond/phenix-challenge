@@ -4,15 +4,14 @@ import java.util.UUID
 
 import com.typesafe.config.ConfigFactory
 import phenix.dataFiles.DataFileService
-import phenix.dataFiles.general.{DataFile, ReadableDataFile}
+import phenix.dataFiles.general.ReadableDataFile
 import phenix.dataFiles.specifics.ReferenceFile
-import phenix.io.path.FileFinder
+import phenix.io.IOService
 import phenix.models.{ShopQuantity, ShopRevenue}
 import phenix.utils.{ResourceCloseable, SuccessFilter}
 
-class LinearProductRevenueAggregator(dataFileService: DataFileService)
+class LinearProductRevenueAggregator(dataFileService: DataFileService, ioService: IOService)
     extends ProductRevenueAggregator
-        with FileFinder
         with ResourceCloseable
         with SuccessFilter {
 
@@ -20,25 +19,6 @@ class LinearProductRevenueAggregator(dataFileService: DataFileService)
       * The application configuration
       */
     private val conf = ConfigFactory.load()
-
-    /*override def aggregate(productQuantities: Iterable[(Int, ReadableDataFile[ShopQuantity])]):
-        Iterable[(Int, ReadableDataFile[ShopRevenue])] = {
-
-        val date = retrieveDateInFirstFile(productQuantities)
-
-        createProductPriceFiles()
-
-        productQuantities map { case (productId, reader) =>
-            tryWith(reader) { reader =>
-                val content = filterSuccessValues(reader.getContent)
-                val revenues = computeRevenues(content, productId, date)
-                tryWith(dataFileService.getProductRevenueWriter(productId, date)) {
-                    _.writeData(revenues)
-                }
-                (productId, dataFileService.getProductRevenueReader(productId, date))
-            }
-        }
-    }*/
 
     override def aggregate(productIds: Iterable[Int], date: LocalDate): Iterable[(Int, ReadableDataFile[ShopRevenue])] = {
         createProductPriceFiles()
@@ -70,7 +50,7 @@ class LinearProductRevenueAggregator(dataFileService: DataFileService)
 
     def createProductPriceFiles()= {
         val dataDirectoryName = conf.getString("paths.data")
-        val referenceNames = findFilesNameByRegex(dataDirectoryName, ReferenceFile.fileNameRegex)
+        val referenceNames = ioService.findFilesNameByRegex(dataDirectoryName, ReferenceFile.fileNameRegex)
 
         referenceNames foreach { name =>
             val shop = ReferenceFile.getUUIDFromFileName(name)
@@ -81,7 +61,7 @@ class LinearProductRevenueAggregator(dataFileService: DataFileService)
                 val content = filterSuccessValues(reader.getContent)
                 content foreach { productValue =>
                     tryWith(dataFileService.getProductPriceWriter(shop, productValue.product, date)) {
-                        _.writeData(Iterable(productValue.value))
+                        _.writeData(Iterable(productValue.price))
                     }
                 }
             }

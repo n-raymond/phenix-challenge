@@ -16,7 +16,7 @@ object PhenixApp extends App with ResourceCloseable {
     val ioService = new IOServiceImpl
     val dataFileFactory = new DataFileServiceImpl(ioService)
     val productQuantityAggregator = new LinearProductQuantityAggregator(dataFileFactory)
-    val productRevenueAggregator = new LinearProductRevenueAggregator(dataFileFactory)
+    val productRevenueAggregator = new LinearProductRevenueAggregator(dataFileFactory, ioService)
     val topSalesAggregator = new LinearTopSalesAggregator(dataFileFactory)
     val topRevenuesAggregator = new LinearTopRevenueAggregator(dataFileFactory)
 

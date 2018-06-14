@@ -3,12 +3,11 @@ package phenix.models
 import phenix.models.exceptions.DeserializationException
 
 /**
-  * Associates a product to a value.
-  * The value can be a price, a number, etc...
+  * Associates a product id to a quantity.
   */
-case class ProductQuantity(product: Int, value: Int) {
+case class ProductQuantity(product: Int, quantity: Int) {
 
-    override def toString: String = s"$product|$value"
+    override def toString: String = s"$product|$quantity"
 
 }
 
@@ -16,19 +15,19 @@ case class ProductQuantity(product: Int, value: Int) {
 object ProductQuantity {
 
     /**
-      * Builds a ProductValue by deserializing it from a string.
-      * @param productValue a string representing a product value with the following format:
+      * Builds a ProductQuantity by deserializing it from a string.
+      * @param productQuantity a string representing a product value with the following format:
       *                    5|129
       * @return a product quantity computed from the given serialized transaction
       */
     @throws(classOf[DeserializationException])
-    def apply(productValue: String): ProductQuantity = {
+    def apply(productQuantity: String): ProductQuantity = {
         try {
-            val parsed = productValue.split('|')
+            val parsed = productQuantity.split('|')
             ProductQuantity(parsed(0).toInt, parsed(1).toInt)
         } catch {
-            case e: NumberFormatException => throw new DeserializationException(productValue, e)
-            case e: IndexOutOfBoundsException=> throw new DeserializationException(productValue, e)
+            case e: NumberFormatException => throw new DeserializationException(productQuantity, e)
+            case e: IndexOutOfBoundsException=> throw new DeserializationException(productQuantity, e)
         }
     }
 }
