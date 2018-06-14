@@ -1,7 +1,7 @@
 package phenix.dataProcessors.productQuantityAggregation
 
 import phenix.dataFiles.general.ReadableDataFile
-import phenix.models.{ProductQuantity, Transaction}
+import phenix.models.{ShopQuantity, Transaction}
 
 
 /**
@@ -15,6 +15,6 @@ trait ProductQuantityAggregator {
       * @param transactionFileReader
       * @return
       */
-    def aggregate(transactionFileReader: ReadableDataFile[Transaction]) : Iterable[(Int, ReadableDataFile[ProductQuantity])]
+    def aggregate(transactionFileReader: ReadableDataFile[Transaction]) : Iterable[(Int, ReadableDataFile[ShopQuantity])]
 
 }

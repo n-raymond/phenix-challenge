@@ -5,7 +5,7 @@ import java.time.LocalDate
 import com.typesafe.config.ConfigFactory
 import phenix.dataFiles.DataFileService
 import phenix.dataFiles.general.ReadableDataFile
-import phenix.models.{ProductQuantity, Transaction}
+import phenix.models.{ShopQuantity, Transaction}
 import phenix.utils.{ResourceCloseable, SuccessFilter}
 
 import scala.collection.immutable
@@ -24,7 +24,7 @@ class LinearProductQuantityAggregator(dataFileFactory: DataFileService)
 
 
     /** @inheritdoc */
-    override def aggregate(transactionFileReader: ReadableDataFile[Transaction]): Iterable[(Int, ReadableDataFile[ProductQuantity])] = {
+    override def aggregate(transactionFileReader: ReadableDataFile[Transaction]): Iterable[(Int, ReadableDataFile[ShopQuantity])] = {
         tryWith (transactionFileReader) {
             map(_) map { case (productId, readers) =>
                 reducer(productId, readers, transactionFileReader.date)
@@ -40,10 +40,10 @@ class LinearProductQuantityAggregator(dataFileFactory: DataFileService)
       * @param transactionFileReader The transaction file that should be processed to do the aggregation
       * @return A map binding the productId with all the intermediate product quantity files related
       */
-    def map(transactionFileReader: ReadableDataFile[Transaction]): Map[Int, Iterable[ReadableDataFile[ProductQuantity]]] = {
+    def map(transactionFileReader: ReadableDataFile[Transaction]): Map[Int, Iterable[ReadableDataFile[ShopQuantity]]] = {
 
         val chunks = transactionFileReader.getChunks(chunkSize)
-        val initialMap = Map[Int, Stream[ReadableDataFile[ProductQuantity]]]()
+        val initialMap = Map[Int, Stream[ReadableDataFile[ShopQuantity]]]()
 
         (initialMap /: chunks) {
             case (map, (chunkId, chunk)) =>
@@ -56,7 +56,7 @@ class LinearProductQuantityAggregator(dataFileFactory: DataFileService)
 
                         innerMap.get(productId) match {
                             case Some(readers) => innerMap + (productId -> freshReader #:: readers)
-                            case None => innerMap + (productId -> freshReader #:: Stream[ReadableDataFile[ProductQuantity]]())
+                            case None => innerMap + (productId -> freshReader #:: Stream[ReadableDataFile[ShopQuantity]]())
                         }
                 }
         }
@@ -69,7 +69,7 @@ class LinearProductQuantityAggregator(dataFileFactory: DataFileService)
       * @param chunk A chunk containing some tried transactions
       * @return A map that binds the productId to an iterable of ProductQuantity
       */
-    def aggregateChunk(chunk: Iterable[Try[Transaction]]): Map[Int, Iterable[ProductQuantity]] = {
+    def aggregateChunk(chunk: Iterable[Try[Transaction]]): Map[Int, Iterable[ShopQuantity]] = {
         filterSuccessValues(chunk) groupBy {
             _.product
         } map {
@@ -84,7 +84,7 @@ class LinearProductQuantityAggregator(dataFileFactory: DataFileService)
       * @param transactions A Stream containing
       * @return Several ProductQuantities resulting from the aggregation
       */
-    def aggregateProductsByShop(transactions: Iterable[Transaction]): Iterable[ProductQuantity] = {
+    def aggregateProductsByShop(transactions: Iterable[Transaction]): Iterable[ShopQuantity] = {
         transactions groupBy {
             _.shop
         } map {
@@ -92,7 +92,7 @@ class LinearProductQuantityAggregator(dataFileFactory: DataFileService)
                 val sum = (0 /: transactionsOfShop) {
                     _ + _.quantity
                 }
-                ProductQuantity(shopId, sum)
+                ShopQuantity(shopId, sum)
         }
     }
 
@@ -107,7 +107,7 @@ class LinearProductQuantityAggregator(dataFileFactory: DataFileService)
       * @param date The date of the sold of the product
       * @return A reader to file containing the aggregation of all the intermediate files.
       */
-    def reducer(productId: Int, readers : Iterable[ReadableDataFile[ProductQuantity]], date: LocalDate): (Int, ReadableDataFile[ProductQuantity]) = {
+    def reducer(productId: Int, readers : Iterable[ReadableDataFile[ShopQuantity]], date: LocalDate): (Int, ReadableDataFile[ShopQuantity]) = {
 
         val lines = tryWith(readers) {
             _ flatMap { reader =>
@@ -116,7 +116,7 @@ class LinearProductQuantityAggregator(dataFileFactory: DataFileService)
                 _.shop
             } map {
                 case (shopId, quantities) =>
-                    ProductQuantity(shopId, (0 /: quantities)  (_ + _.quantity))
+                    ShopQuantity(shopId, (0 /: quantities)  (_ + _.quantity))
             }
         }
 

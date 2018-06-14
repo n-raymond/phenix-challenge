@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 import phenix.dataFiles.general.{ReadableDataFileImpl, WritableDataFileImpl}
 import phenix.io.IOService
-import phenix.models.ProductQuantity
+import phenix.models.ShopQuantity
 
 
 /**
@@ -29,12 +29,12 @@ object IntermediateProductQuantityFile {
 
     class Reader(productId: Int, groupId: Int, date: LocalDate, ioService: IOService)
         extends IntermediateProductQuantityFile(productId, groupId, date, ioService)
-            with ReadableDataFileImpl[ProductQuantity]
+            with ReadableDataFileImpl[ShopQuantity]
 
 
     class Writer(productId: Int, groupId: Int, date: LocalDate, ioService: IOService)
         extends IntermediateProductQuantityFile(productId, groupId, date, ioService)
-            with WritableDataFileImpl[ProductQuantity]
+            with WritableDataFileImpl[ShopQuantity]
 
 }
 

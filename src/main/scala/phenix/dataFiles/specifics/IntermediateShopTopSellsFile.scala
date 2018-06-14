@@ -14,7 +14,7 @@ import phenix.models.ProductValue
   * @param date The date of the DatedDataFile
   * @param ioService
   */
-class IntermediateShopToSellsFile(shop: UUID, val group: Int, date: LocalDate, ioService: IOService)
+class IntermediateShopTopSellsFile(shop: UUID, val group: Int, date: LocalDate, ioService: IOService)
     extends ShopTopSellsFile(shop, date, ioService) {
 
     /** @inheritdoc*/
@@ -25,15 +25,15 @@ class IntermediateShopToSellsFile(shop: UUID, val group: Int, date: LocalDate, i
 
 }
 
-object IntermediateShopToSellsFile {
+object IntermediateShopTopSellsFile {
 
     class Reader(shop: UUID, group: Int, date: LocalDate, ioService: IOService)
-        extends IntermediateShopToSellsFile(shop, group, date, ioService)
+        extends IntermediateShopTopSellsFile(shop, group, date, ioService)
             with ReadableDataFileImpl[ProductValue]
 
 
     class Writer(shop: UUID, group: Int, date: LocalDate, ioService: IOService)
-        extends IntermediateShopToSellsFile(shop, group, date, ioService)
+        extends IntermediateShopTopSellsFile(shop, group, date, ioService)
             with WritableDataFileImpl[ProductValue]
 
 }

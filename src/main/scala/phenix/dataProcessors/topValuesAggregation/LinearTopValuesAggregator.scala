@@ -6,7 +6,7 @@ import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 import phenix.dataFiles.DataFileService
 import phenix.dataFiles.general.ReadableDataFile
-import phenix.models.{ProductQuantity, ProductValue}
+import phenix.models.{ShopQuantity, ProductValue}
 import phenix.utils.{ResourceCloseable, SuccessFilter}
 
 class LinearTopValuesAggregator(dataFileService: DataFileService)
@@ -27,7 +27,7 @@ class LinearTopValuesAggregator(dataFileService: DataFileService)
       *                          for each product his value for a specific shop
       * @return An iterable of the resulting files
       */
-    override def aggregate(productQuantities: Iterable[(Int, ReadableDataFile[ProductQuantity])]): Iterable[(UUID, ReadableDataFile[ProductValue])] = {
+    override def aggregate(productQuantities: Iterable[(Int, ReadableDataFile[ShopQuantity])]): Iterable[(UUID, ReadableDataFile[ProductValue])] = {
         val groups = productQuantities.grouped(groupSize).zipWithIndex
 
         val intermediates = groups.map { case (group, groupId) =>
@@ -46,7 +46,7 @@ class LinearTopValuesAggregator(dataFileService: DataFileService)
       * @param fileGroup The group of files.
       * @return An iterable of couples representing (the shopId, an intermediate file)
       */
-    def intermediateAggragation(groupId: Int, fileGroup: Iterable[(Int, ReadableDataFile[ProductQuantity])]) : Iterable[(UUID, ReadableDataFile[ProductValue])] = {
+    def intermediateAggragation(groupId: Int, fileGroup: Iterable[(Int, ReadableDataFile[ShopQuantity])]) : Iterable[(UUID, ReadableDataFile[ProductValue])] = {
         val initialMap = Map[UUID, List[ProductValue]]()
         val date = retrieveDateInFirstFile(fileGroup)
 
@@ -78,7 +78,7 @@ class LinearTopValuesAggregator(dataFileService: DataFileService)
       * @return The resulting map with the fresh aggregation
       */
     def aggregateProductQuantitiesByShop(
-                                            productQuantities: Iterable[ProductQuantity],
+                                            productQuantities: Iterable[ShopQuantity],
                                             productId: Int,
                                             map: Map[UUID, List[ProductValue]]
                                         ): Map[UUID, List[ProductValue]] = {

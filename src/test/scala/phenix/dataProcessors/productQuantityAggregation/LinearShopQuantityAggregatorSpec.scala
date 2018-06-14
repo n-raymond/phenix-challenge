@@ -5,12 +5,12 @@ import java.util.UUID
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 import phenix.dataFiles.DataFileService
-import phenix.models.{ProductQuantity, Transaction}
+import phenix.models.{ShopQuantity, Transaction}
 
 import scala.collection.SortedMap
 import scala.util.{Failure, Success}
 
-class LinearProductQuantityAggregatorSpec extends FlatSpec with Matchers with MockFactory {
+class LinearShopQuantityAggregatorSpec extends FlatSpec with Matchers with MockFactory {
 
     private val dataFileService = stub[DataFileService]
     private val productQuantityAggregator = new LinearProductQuantityAggregator(dataFileService)
@@ -30,9 +30,9 @@ class LinearProductQuantityAggregatorSpec extends FlatSpec with Matchers with Mo
         val result = productQuantityAggregator.aggregateProductsByShop(initialStream).toList sortBy (_.shop)
 
         val expected = Iterable(
-            ProductQuantity(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 8 + 34),
-            ProductQuantity(UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 12 + 2 + 78),
-            ProductQuantity(UUID.fromString("bdc2a431-797d-4b07-9567-67c565a67b84"), 123 + 16)
+            ShopQuantity(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 8 + 34),
+            ShopQuantity(UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 12 + 2 + 78),
+            ShopQuantity(UUID.fromString("bdc2a431-797d-4b07-9567-67c565a67b84"), 123 + 16)
         ).toList sortBy (_.shop)
 
         result should equal (expected)
@@ -66,18 +66,18 @@ class LinearProductQuantityAggregatorSpec extends FlatSpec with Matchers with Mo
 
         val expected = SortedMap(
             513 -> Iterable(
-                ProductQuantity(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 8 + 68),
-                ProductQuantity(UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 12 + 2 + 14),
-                ProductQuantity(UUID.fromString("bdc2a431-797d-4b07-9567-67c565a67b84"), 1)
+                ShopQuantity(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 8 + 68),
+                ShopQuantity(UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 12 + 2 + 14),
+                ShopQuantity(UUID.fromString("bdc2a431-797d-4b07-9567-67c565a67b84"), 1)
             ).toList.sortBy(_.shop),
             12 -> Iterable(
-                ProductQuantity(UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 78 + 45),
-                ProductQuantity(UUID.fromString("bdc2a431-797d-4b07-9567-67c565a67b84"), 123 + 16),
-                ProductQuantity(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 354 + 6)
+                ShopQuantity(UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 78 + 45),
+                ShopQuantity(UUID.fromString("bdc2a431-797d-4b07-9567-67c565a67b84"), 123 + 16),
+                ShopQuantity(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 354 + 6)
             ).toList.sortBy(_.shop),
             78 -> Iterable(
-                ProductQuantity(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 34),
-                ProductQuantity(UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 7)
+                ShopQuantity(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 34),
+                ShopQuantity(UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 7)
             ).toList.sortBy(_.shop)
         )
 

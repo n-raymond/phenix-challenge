@@ -7,7 +7,7 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, Matchers}
 import phenix.dataFiles.DataFileService
 import phenix.dataFiles.general.{ReadableDataFile, WritableDataFile}
-import phenix.models.{ProductQuantity, ProductValue}
+import phenix.models.{ShopQuantity, ProductValue}
 
 import scala.util.Success
 
@@ -25,8 +25,8 @@ class LinearTopValuesAggregatorSpec extends FlatSpec with Matchers with MockFact
         val topSalesAggregator = new LinearTopValuesAggregator(dataFileService)
 
         val qties = Iterable(
-            new ProductQuantity(UUID.fromString("bdc2a431-797d-4b07-9567-67c565a67b84"), 4),
-            new ProductQuantity(UUID.fromString("af068240-8198-4b79-9cf9-c28c0db65f63"), 8),
+            new ShopQuantity(UUID.fromString("bdc2a431-797d-4b07-9567-67c565a67b84"), 4),
+            new ShopQuantity(UUID.fromString("af068240-8198-4b79-9cf9-c28c0db65f63"), 8),
         )
 
         val productId = 6
@@ -116,9 +116,9 @@ class LinearTopValuesAggregatorSpec extends FlatSpec with Matchers with MockFact
 
         /* Expectations */
 
-        inSequenceWithLogging {
+        inSequence{
             fileA1.date _ expects() returning date
-            inAnyOrderWithLogging{
+            inAnyOrder{
                 fileA1.getContent _ expects() returning contentA1
                 fileA1.close _ expects()
 

@@ -9,11 +9,11 @@ import org.scalatest.{FlatSpec, Matchers}
 import phenix.io.IOService
 import phenix.io.reader.FileReader
 import phenix.io.writer.FileWriter
-import phenix.models.ProductQuantity
+import phenix.models.ShopQuantity
 
 import scala.util.Success
 
-class IntermediateProductQuantityFileSpec extends FlatSpec with Matchers with MockFactory {
+class IntermediateShopQuantityFileSpec extends FlatSpec with Matchers with MockFactory {
 
     private val conf = ConfigFactory.load()
 
@@ -43,9 +43,9 @@ class IntermediateProductQuantityFileSpec extends FlatSpec with Matchers with Mo
         val file = new IntermediateProductQuantityFile.Reader(37, 14, LocalDate.of(2015, 5, 14), ioService)
 
         val result = Iterable(
-            Success(ProductQuantity(UUID.fromString("72a2876c-bc8b-4f35-8882-8d661fac2606"), 652)),
-            Success(ProductQuantity(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 8)),
-            Success(ProductQuantity(UUID.fromString("8e588f2f-d19e-436c-952f-1cdd9f0b12b0"), 12))
+            Success(ShopQuantity(UUID.fromString("72a2876c-bc8b-4f35-8882-8d661fac2606"), 652)),
+            Success(ShopQuantity(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 8)),
+            Success(ShopQuantity(UUID.fromString("8e588f2f-d19e-436c-952f-1cdd9f0b12b0"), 12))
         )
 
         file.getContent should equal (result)
@@ -67,9 +67,9 @@ class IntermediateProductQuantityFileSpec extends FlatSpec with Matchers with Mo
 
 
         val data = Iterable(
-            ProductQuantity(UUID.fromString("72a2876c-bc8b-4f35-8882-8d661fac2606"), 652),
-            ProductQuantity(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 8),
-            ProductQuantity(UUID.fromString("8e588f2f-d19e-436c-952f-1cdd9f0b12b0"), 12)
+            ShopQuantity(UUID.fromString("72a2876c-bc8b-4f35-8882-8d661fac2606"), 652),
+            ShopQuantity(UUID.fromString("29366c83-eae9-42d3-a8af-f15339830dc5"), 8),
+            ShopQuantity(UUID.fromString("8e588f2f-d19e-436c-952f-1cdd9f0b12b0"), 12)
         )
 
         file.writeData(data)

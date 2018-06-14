@@ -4,7 +4,7 @@ package phenix.dataProcessors.topValuesAggregation
 import java.util.UUID
 
 import phenix.dataFiles.general.ReadableDataFile
-import phenix.models.{ProductQuantity, ProductValue}
+import phenix.models.{ShopQuantity, ProductValue}
 
 
 /**
@@ -13,6 +13,6 @@ import phenix.models.{ProductQuantity, ProductValue}
   */
 trait TopValuesAggregator {
 
-    def aggregate(transactionFileReader: Iterable[(Int, ReadableDataFile[ProductQuantity])]) : Iterable[(UUID, ReadableDataFile[ProductValue])]
+    def aggregate(transactionFileReader: Iterable[(Int, ReadableDataFile[ShopQuantity])]) : Iterable[(UUID, ReadableDataFile[ProductValue])]
 
 }
