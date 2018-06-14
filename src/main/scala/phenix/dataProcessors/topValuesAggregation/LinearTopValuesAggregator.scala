@@ -20,22 +20,23 @@ class LinearTopValuesAggregator(dataFileService: DataFileService)
     private val groupSize = conf.getInt("transactions.group-size")
 
     /**
-      * Divides the datafile Iterable in entry to get several groups of file that can
-      * be Aggregated independently. Then, reduce all the specific results to obtain
-      * a the top product of each shop.
-      * @param productQuantities An iterable of ProductQuantity readable files that group
-      *                          for each product his value for a specific shop
-      * @return An iterable of the resulting files
-      */
-    override def aggregate(productQuantities: Iterable[(Int, ReadableDataFile[ShopQuantity])]): Iterable[(UUID, ReadableDataFile[ProductValue])] = {
-        val groups = productQuantities.grouped(groupSize).zipWithIndex
+     * Divides the datafile Iterable in entry to get several groups of file that can
+     * be Aggregated independently. Then, reduce all the specific results to obtain
+     * a the top product of each shop.
+     * @param productIds An iterable of product ids
+     * @return An iterable of the resulting files
+     */
+    override def aggregate(productIds: Iterable[Int], date: LocalDate): Iterable[(UUID, ReadableDataFile[ProductValue])] = {
+        val groups = productIds.grouped(groupSize).zipWithIndex
 
         val intermediates = groups.map { case (group, groupId) =>
-            intermediateAggragation(groupId, group)
+            intermediateAggregation(groupId, group, date)
         }
 
         intermediates reduce reducer
     }
+
+
 
     /**
       * Does the intermediate aggregation for a group of productQuantity files.
@@ -46,12 +47,11 @@ class LinearTopValuesAggregator(dataFileService: DataFileService)
       * @param fileGroup The group of files.
       * @return An iterable of couples representing (the shopId, an intermediate file)
       */
-    def intermediateAggragation(groupId: Int, fileGroup: Iterable[(Int, ReadableDataFile[ShopQuantity])]) : Iterable[(UUID, ReadableDataFile[ProductValue])] = {
+    def intermediateAggregation(groupId: Int, fileGroup: Iterable[Int], date: LocalDate) : Iterable[(UUID, ReadableDataFile[ProductValue])] = {
         val initialMap = Map[UUID, List[ProductValue]]()
-        val date = retrieveDateInFirstFile(fileGroup)
 
         val aggregations = (initialMap /: fileGroup) {
-            case (acc, (productId, productQtyFile)) => tryWith(productQtyFile) { file =>
+            case (acc, productId) => tryWith(dataFileService.getProductQuantityReader(productId, date)) { file =>
                 val content = filterSuccessValues(file.getContent)
                 aggregateProductQuantitiesByShop(content, productId, acc)
             }

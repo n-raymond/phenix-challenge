@@ -15,6 +15,6 @@ trait ProductQuantityAggregator {
       * @param transactionFileReader
       * @return
       */
-    def aggregate(transactionFileReader: ReadableDataFile[Transaction]) : Iterable[(Int, ReadableDataFile[ShopQuantity])]
+    def aggregate(transactionFileReader: ReadableDataFile[Transaction]) : Iterable[Int]
 
 }

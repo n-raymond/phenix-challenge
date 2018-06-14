@@ -24,10 +24,11 @@ class LinearProductQuantityAggregator(dataFileFactory: DataFileService)
 
 
     /** @inheritdoc */
-    override def aggregate(transactionFileReader: ReadableDataFile[Transaction]): Iterable[(Int, ReadableDataFile[ShopQuantity])] = {
+    override def aggregate(transactionFileReader: ReadableDataFile[Transaction]): Iterable[Int] = {
         tryWith (transactionFileReader) {
             map(_) map { case (productId, readers) =>
                 reducer(productId, readers, transactionFileReader.date)
+                productId
             }
         }
     }
@@ -101,13 +102,13 @@ class LinearProductQuantityAggregator(dataFileFactory: DataFileService)
 
     /**
       * Takes all the intermediate product quantity file readers associated to a productId and aggregate their
-      * data to produce a product quantity file. Finally, returns a reader of the resulting file.
+      * data to produce a product quantity file.
       * @param productId The id of the product
       * @param readers Intermediate quantity file associated with the product id
       * @param date The date of the sold of the product
       * @return A reader to file containing the aggregation of all the intermediate files.
       */
-    def reducer(productId: Int, readers : Iterable[ReadableDataFile[ShopQuantity]], date: LocalDate): (Int, ReadableDataFile[ShopQuantity]) = {
+    def reducer(productId: Int, readers : Iterable[ReadableDataFile[ShopQuantity]], date: LocalDate) = {
 
         val lines = tryWith(readers) {
             _ flatMap { reader =>
@@ -123,8 +124,6 @@ class LinearProductQuantityAggregator(dataFileFactory: DataFileService)
         tryWith(dataFileFactory.getProductQuantityWriter(productId, date)) {
             _.writeData(lines)
         }
-
-        (productId, dataFileFactory.getProductQuantityReader(productId, date))
     }
 
 }

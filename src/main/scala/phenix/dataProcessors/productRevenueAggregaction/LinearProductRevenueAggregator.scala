@@ -21,7 +21,7 @@ class LinearProductRevenueAggregator(dataFileService: DataFileService)
       */
     private val conf = ConfigFactory.load()
 
-    override def aggregate(productQuantities: Iterable[(Int, ReadableDataFile[ShopQuantity])]):
+    /*override def aggregate(productQuantities: Iterable[(Int, ReadableDataFile[ShopQuantity])]):
         Iterable[(Int, ReadableDataFile[ShopRevenue])] = {
 
         val date = retrieveDateInFirstFile(productQuantities)
@@ -30,6 +30,21 @@ class LinearProductRevenueAggregator(dataFileService: DataFileService)
 
         productQuantities map { case (productId, reader) =>
             tryWith(reader) { reader =>
+                val content = filterSuccessValues(reader.getContent)
+                val revenues = computeRevenues(content, productId, date)
+                tryWith(dataFileService.getProductRevenueWriter(productId, date)) {
+                    _.writeData(revenues)
+                }
+                (productId, dataFileService.getProductRevenueReader(productId, date))
+            }
+        }
+    }*/
+
+    override def aggregate(productIds: Iterable[Int], date: LocalDate): Iterable[(Int, ReadableDataFile[ShopRevenue])] = {
+        createProductPriceFiles()
+
+        productIds map { productId =>
+            tryWith(dataFileService.getProductQuantityReader(productId, date)) { reader =>
                 val content = filterSuccessValues(reader.getContent)
                 val revenues = computeRevenues(content, productId, date)
                 tryWith(dataFileService.getProductRevenueWriter(productId, date)) {
@@ -71,16 +86,6 @@ class LinearProductRevenueAggregator(dataFileService: DataFileService)
                 }
             }
         }
-    }
-
-
-    /**
-      * Get the date of the first file in the list
-      * @param fileGroup the list
-      * @return a local date
-      */
-    def retrieveDateInFirstFile(fileGroup: Iterable[(_, DataFile[_])]): LocalDate = {
-        fileGroup.head._2.date
     }
 
 }

@@ -19,10 +19,12 @@ object PhenixApp extends App with ResourceCloseable {
     val topSalesAggregator = new LinearTopValuesAggregator(dataFileFactory)
 
     /* Start */
-    val productQuantities = productQuantityAggregator.aggregate(dataFileFactory.getTransactionReader(LocalDate.of(2017, 5, 14)))
-    val productRevenues = productRevenueAggregator.aggregate(productQuantities)
+    val date = LocalDate.of(2017, 5, 14)
 
-    //topSalesAggregator.aggregate(productQuantities)
+    val productIds = productQuantityAggregator.aggregate(dataFileFactory.getTransactionReader(date))
+    val productRevenues = productRevenueAggregator.aggregate(productIds, date)
+
+    topSalesAggregator.aggregate(productIds, date)
 
 
 }
