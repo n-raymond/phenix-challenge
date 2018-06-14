@@ -1,4 +1,4 @@
-package phenix.dataProcessors.productRevenueAggregaction
+package phenix.dataProcessors.productRevenueAggregation
 
 import java.time.LocalDate
 

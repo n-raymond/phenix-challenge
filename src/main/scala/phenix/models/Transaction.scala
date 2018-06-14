@@ -6,7 +6,7 @@ import phenix.models.exceptions.DeserializationException
 import phenix.utils.StrictlyNaturalIntDeserializer
 
 /**
-  * A transaction that has a certain id and happened at the given datetime, in the given shop,
+  * A transaction that happened at the given datetime, in the given shop,
   * for a given product sold at a given quantity.
   */
 case class Transaction(shop: UUID, product: Int, quantity: Int) {
@@ -27,7 +27,7 @@ object Transaction extends StrictlyNaturalIntDeserializer {
     def apply(transaction: String) : Transaction = {
         try {
             val parsed = transaction.split('|')
-            /* We are ignoring the transaction id and the date since it not be used... */
+            /* We are ignoring the transaction id and the date since it will not be used... */
             Transaction(UUID.fromString(parsed(2)), parsed(3).toInt, strictlyPositiveDeserialization(parsed(4)))
         } catch {
             case e: NumberFormatException => throw new DeserializationException(transaction, e)

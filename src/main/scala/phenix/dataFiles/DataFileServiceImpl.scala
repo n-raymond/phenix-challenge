@@ -3,6 +3,7 @@ package phenix.dataFiles
 import java.time.LocalDate
 import java.util.UUID
 
+import phenix.dataFiles
 import phenix.dataFiles.general.{ReadableDataFile, WritableDataFile}
 import phenix.dataFiles.specifics._
 import phenix.io.IOService
@@ -41,22 +42,22 @@ class DataFileServiceImpl(ioService: IOService) extends DataFileService {
     }
 
     /** @inheritdoc */
-    override def getShopTopSellsReader(shop: UUID, date: LocalDate): ReadableDataFile[ProductValue] = {
+    override def getShopTopSellsReader(shop: UUID, date: LocalDate): ReadableDataFile[ProductQuantity] = {
         new ShopTopSellsFile.Reader(shop, date, ioService)
     }
 
     /** @inheritdoc */
-    override def getShopTopSellsWriter(shop: UUID, date: LocalDate): WritableDataFile[ProductValue] = {
+    override def getShopTopSellsWriter(shop: UUID, date: LocalDate): WritableDataFile[ProductQuantity] = {
         new ShopTopSellsFile.Writer(shop, date, ioService)
     }
 
     /** @inheritdoc */
-    override def getIntermediateShopTopSellsReader(shop: UUID, group: Int, date: LocalDate): ReadableDataFile[ProductValue] = {
+    override def getIntermediateShopTopSellsReader(shop: UUID, group: Int, date: LocalDate): ReadableDataFile[ProductQuantity] = {
         new IntermediateShopTopSellsFile.Reader(shop, group, date, ioService)
     }
 
     /** @inheritdoc */
-    override def getIntermediateShopTopSellsWriter(shop: UUID, group: Int, date: LocalDate): WritableDataFile[ProductValue] = {
+    override def getIntermediateShopTopSellsWriter(shop: UUID, group: Int, date: LocalDate): WritableDataFile[ProductQuantity] = {
         new IntermediateShopTopSellsFile.Writer(shop, group, date, ioService)
     }
 
@@ -81,5 +82,23 @@ class DataFileServiceImpl(ioService: IOService) extends DataFileService {
         new ProductRevenueFile.Writer(productId, date, ioService)
     }
 
+    /** @inheritdoc */
+    override def getShopTopRevenueReader(shop: UUID, date: LocalDate): ReadableDataFile[ProductPrice] = {
+        new ShopTopRevenueFile.Reader(shop, date, ioService)
+    }
 
+    /** @inheritdoc */
+    override def getShopTopRevenueWriter(shop: UUID, date: LocalDate): WritableDataFile[ProductPrice] = {
+        new ShopTopRevenueFile.Writer(shop, date, ioService)
+    }
+
+    /** @inheritdoc */
+    override def getIntermediateShopTopRevenueReader(shop: UUID, groupId: Int, date: LocalDate): ReadableDataFile[ProductPrice] = {
+        new IntermediateShopTopRevenueFile.Reader(shop, groupId, date, ioService)
+    }
+
+    /** @inheritdoc */
+    override def getIntermediateShopTopRevenueWriter(shop: UUID, groupId: Int, date: LocalDate): WritableDataFile[ProductPrice] = {
+        new IntermediateShopTopRevenueFile.Writer(shop, groupId, date, ioService)
+    }
 }
