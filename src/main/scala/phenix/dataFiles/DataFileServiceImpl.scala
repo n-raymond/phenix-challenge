@@ -3,7 +3,6 @@ package phenix.dataFiles
 import java.time.LocalDate
 import java.util.UUID
 
-import phenix.dataFiles
 import phenix.dataFiles.general.{ReadableDataFile, WritableDataFile}
 import phenix.dataFiles.specifics._
 import phenix.io.IOService
@@ -83,22 +82,22 @@ class DataFileServiceImpl(ioService: IOService) extends DataFileService {
     }
 
     /** @inheritdoc */
-    override def getShopTopRevenueReader(shop: UUID, date: LocalDate): ReadableDataFile[ProductPrice] = {
+    override def getShopTopRevenueReader(shop: UUID, date: LocalDate): ReadableDataFile[ProductRevenue] = {
         new ShopTopRevenueFile.Reader(shop, date, ioService)
     }
 
     /** @inheritdoc */
-    override def getShopTopRevenueWriter(shop: UUID, date: LocalDate): WritableDataFile[ProductPrice] = {
+    override def getShopTopRevenueWriter(shop: UUID, date: LocalDate): WritableDataFile[ProductRevenue] = {
         new ShopTopRevenueFile.Writer(shop, date, ioService)
     }
 
     /** @inheritdoc */
-    override def getIntermediateShopTopRevenueReader(shop: UUID, groupId: Int, date: LocalDate): ReadableDataFile[ProductPrice] = {
+    override def getIntermediateShopTopRevenueReader(shop: UUID, groupId: Int, date: LocalDate): ReadableDataFile[ProductRevenue] = {
         new IntermediateShopTopRevenueFile.Reader(shop, groupId, date, ioService)
     }
 
     /** @inheritdoc */
-    override def getIntermediateShopTopRevenueWriter(shop: UUID, groupId: Int, date: LocalDate): WritableDataFile[ProductPrice] = {
+    override def getIntermediateShopTopRevenueWriter(shop: UUID, groupId: Int, date: LocalDate): WritableDataFile[ProductRevenue] = {
         new IntermediateShopTopRevenueFile.Writer(shop, groupId, date, ioService)
     }
 }

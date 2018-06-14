@@ -5,14 +5,14 @@ import java.util.UUID
 
 import phenix.dataFiles.general.{ReadableDataFileImpl, WritableDataFileImpl}
 import phenix.io.IOService
-import phenix.models.ProductPrice
+import phenix.models.ProductRevenue
 
 /**
-  * A helper to manage intermediate files of shop's top sells.
+  * A helper to manage intermediate files of shop's top revenue.
   * @param shop The id of the shop
   * @param group The intermediate group id of the file
   * @param date The date of the DatedDataFile
-  * @param ioService
+  * @param ioService The injected service in charge of IO operations
   */
 class IntermediateShopTopRevenueFile(shop: UUID, val group: Int, date: LocalDate, ioService: IOService)
     extends ShopTopRevenueFile(shop, date, ioService) {
@@ -29,11 +29,11 @@ object IntermediateShopTopRevenueFile {
 
     class Reader(shop: UUID, group: Int, date: LocalDate, ioService: IOService)
         extends IntermediateShopTopRevenueFile(shop, group, date, ioService)
-            with ReadableDataFileImpl[ProductPrice]
+            with ReadableDataFileImpl[ProductRevenue]
 
 
     class Writer(shop: UUID, group: Int, date: LocalDate, ioService: IOService)
         extends IntermediateShopTopRevenueFile(shop, group, date, ioService)
-            with WritableDataFileImpl[ProductPrice]
+            with WritableDataFileImpl[ProductRevenue]
 
 }

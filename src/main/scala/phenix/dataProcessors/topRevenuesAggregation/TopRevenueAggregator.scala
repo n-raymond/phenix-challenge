@@ -1,10 +1,10 @@
-package phenix.dataProcessors.topRevenuesAggregation.topSalesAggregation
+package phenix.dataProcessors.topRevenuesAggregation
 
 import java.time.LocalDate
 import java.util.UUID
 
 import phenix.dataFiles.general.ReadableDataFile
-import phenix.models.ProductPrice
+import phenix.models.ProductRevenue
 
 
 /**
@@ -13,6 +13,6 @@ import phenix.models.ProductPrice
   */
 trait TopRevenueAggregator {
 
-    def aggregate(transactionFileReader: Iterable[Int], date: LocalDate) : Iterable[(UUID, ReadableDataFile[ProductPrice])]
+    def aggregate(transactionFileReader: Iterable[Int], date: LocalDate) : Iterable[(UUID, ReadableDataFile[ProductRevenue])]
 
 }

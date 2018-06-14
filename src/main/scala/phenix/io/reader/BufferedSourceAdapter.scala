@@ -3,9 +3,8 @@ package phenix.io.reader
 import scala.io.Source
 
 /**
-  * Main File Reader and writer implementation.
-  * This singleton offers a way to do read operations by using
-  * the scala.io.Sources.
+  * An adapter used to read in a file using a scala.io.Sources.
+  * @param fileName The file name
   */
 class BufferedSourceAdapter(val fileName: String) extends FileReader with AutoCloseable {
 

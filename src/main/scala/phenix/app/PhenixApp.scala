@@ -5,7 +5,7 @@ import java.time.LocalDate
 import phenix.dataFiles.DataFileServiceImpl
 import phenix.dataProcessors.productQuantityAggregation.LinearProductQuantityAggregator
 import phenix.dataProcessors.productRevenueAggregation.LinearProductRevenueAggregator
-import phenix.dataProcessors.topRevenuesAggregation.topSalesAggregation.LinearTopRevenueAggregator
+import phenix.dataProcessors.topRevenuesAggregation.LinearTopRevenueAggregator
 import phenix.dataProcessors.topSalesAggregation.LinearTopSalesAggregator
 import phenix.io.IOServiceImpl
 import phenix.utils.ResourceCloseable

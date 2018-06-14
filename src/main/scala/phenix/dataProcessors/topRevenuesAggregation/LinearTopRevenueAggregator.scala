@@ -1,4 +1,4 @@
-package phenix.dataProcessors.topRevenuesAggregation.topSalesAggregation
+package phenix.dataProcessors.topRevenuesAggregation
 
 import java.time.LocalDate
 import java.util.UUID
@@ -6,7 +6,7 @@ import java.util.UUID
 import com.typesafe.config.ConfigFactory
 import phenix.dataFiles.DataFileService
 import phenix.dataFiles.general.ReadableDataFile
-import phenix.models.{ProductPrice, ShopRevenue}
+import phenix.models.{ProductPrice, ProductRevenue, ShopRevenue}
 import phenix.utils.{ResourceCloseable, SuccessFilter}
 
 class LinearTopRevenueAggregator(dataFileService: DataFileService)
@@ -25,7 +25,7 @@ class LinearTopRevenueAggregator(dataFileService: DataFileService)
      * @param productIds An iterable of product ids
      * @return An iterable of the resulting files
      */
-    override def aggregate(productIds: Iterable[Int], date: LocalDate): Iterable[(UUID, ReadableDataFile[ProductPrice])] = {
+    override def aggregate(productIds: Iterable[Int], date: LocalDate): Iterable[(UUID, ReadableDataFile[ProductRevenue])] = {
         val groups = productIds.grouped(groupSize).zipWithIndex
 
         val intermediates = groups.map { case (group, groupId) =>
@@ -46,8 +46,8 @@ class LinearTopRevenueAggregator(dataFileService: DataFileService)
       * @param fileGroup The group of files.
       * @return An iterable of couples representing (the shopId, an intermediate file)
       */
-    def intermediateAggregation(groupId: Int, fileGroup: Iterable[Int], date: LocalDate) : Iterable[(UUID, ReadableDataFile[ProductPrice])] = {
-        val initialMap = Map[UUID, List[ProductPrice]]()
+    def intermediateAggregation(groupId: Int, fileGroup: Iterable[Int], date: LocalDate) : Iterable[(UUID, ReadableDataFile[ProductRevenue])] = {
+        val initialMap = Map[UUID, List[ProductRevenue]]()
 
         val aggregations = (initialMap /: fileGroup) {
             case (acc, productId) => tryWith(dataFileService.getProductRevenueReader(productId, date)) { file =>
@@ -79,16 +79,16 @@ class LinearTopRevenueAggregator(dataFileService: DataFileService)
     def aggregateProductQuantitiesByShop(
                                             productQuantities: Iterable[ShopRevenue],
                                             productId: Int,
-                                            map: Map[UUID, List[ProductPrice]]
-                                        ): Map[UUID, List[ProductPrice]] = {
+                                            map: Map[UUID, List[ProductRevenue]]
+                                        ): Map[UUID, List[ProductRevenue]] = {
         (map /: productQuantities) {
             case (acc, productPrice) =>
                 val list = acc.getOrElse(productPrice.shop, List())
-                acc + (productPrice.shop -> (new ProductPrice(productId, productPrice.revenue) :: list))
+                acc + (productPrice.shop -> (new ProductRevenue(productId, productPrice.revenue) :: list))
         }
     }
 
-    def reducer(a: Iterable[(UUID, ReadableDataFile[ProductPrice])], b: Iterable[(UUID, ReadableDataFile[ProductPrice])]) : Iterable[(UUID, ReadableDataFile[ProductPrice])] = {
+    def reducer(a: Iterable[(UUID, ReadableDataFile[ProductRevenue])], b: Iterable[(UUID, ReadableDataFile[ProductRevenue])]) : Iterable[(UUID, ReadableDataFile[ProductRevenue])] = {
 
         val date = retrieveDateInFirstFile(a)
         def merged = (a ++ b).groupBy (_._1)
@@ -115,7 +115,7 @@ class LinearTopRevenueAggregator(dataFileService: DataFileService)
         fileGroup.head._2.date
     }
 
-    def retrieveTop100(values: Iterable[ProductPrice]): Iterable[ProductPrice] = {
+    def retrieveTop100(values: Iterable[ProductRevenue]): Iterable[ProductRevenue] = {
         values.toList.sortBy(- _.price).take(100)
     }
 

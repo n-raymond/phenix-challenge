@@ -2,8 +2,8 @@ package phenix.io
 
 import java.io.IOException
 
-import phenix.io.reader.{BufferedSourceAdapter, FileReader}
-import phenix.io.writer.{FileWriter, PrintWriterAdapter}
+import phenix.io.reader.FileReader
+import phenix.io.writer.FileWriter
 
 import scala.util.matching.Regex
 

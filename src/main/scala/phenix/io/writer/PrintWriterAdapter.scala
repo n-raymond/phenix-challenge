@@ -3,7 +3,10 @@ package phenix.io.writer
 import java.io.{BufferedWriter, PrintWriter, FileWriter => FW}
 
 
-
+/**
+  * An adapter used to write in a file using a java.io.PrintWriter.
+  * @param fileName The file name
+  */
 class PrintWriterAdapter(val fileName: String) extends FileWriter with AutoCloseable {
 
     private lazy val fileWriter = new FW(fileName, false)
