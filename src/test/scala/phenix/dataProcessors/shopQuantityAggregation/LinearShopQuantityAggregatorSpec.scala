@@ -1,4 +1,4 @@
-package phenix.dataProcessors.productQuantityAggregation
+package phenix.dataProcessors.shopQuantityAggregation
 
 import java.util.UUID
 
@@ -13,7 +13,7 @@ import scala.util.{Failure, Success}
 class LinearShopQuantityAggregatorSpec extends FlatSpec with Matchers with MockFactory {
 
     private val dataFileService = stub[DataFileService]
-    private val productQuantityAggregator = new LinearProductQuantityAggregator(dataFileService)
+    private val productQuantityAggregator = new LinearShopQuantityAggregator(dataFileService)
 
     "aggregateProductsByShop" should "succeed to aggregate the transactions by shop" in {
 

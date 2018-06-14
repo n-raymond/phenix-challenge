@@ -1,14 +1,14 @@
-package phenix.dataProcessors.productQuantityAggregation
+package phenix.dataProcessors.shopQuantityAggregation
 
 import phenix.dataFiles.general.ReadableDataFile
 import phenix.models.{ShopQuantity, Transaction}
 
 
 /**
-  * Offers a way to process transaction
-  * and aggregate the sum of each sold product into ProductQuantityFiles
+  * Offers a way to process transactions
+  * and aggregate the sum of each sold product.
   */
-trait ProductQuantityAggregator {
+trait ShopQuantityAggregator {
 
     /**
       *

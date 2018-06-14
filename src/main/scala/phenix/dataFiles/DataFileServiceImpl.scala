@@ -21,64 +21,64 @@ class DataFileServiceImpl(ioService: IOService) extends DataFileService {
     }
 
     /** @inheritdoc */
-    override def getProductQuantityReader(productId: Int, date: LocalDate): ReadableDataFile[ShopQuantity] = {
-        new ProductQuantityFile.Reader(productId, date, ioService)
+    override def getShopQuantityReader(productId: Int, date: LocalDate): ReadableDataFile[ShopQuantity] = {
+        new ShopQuantityFile.Reader(productId, date, ioService)
     }
 
     /** @inheritdoc */
-    override def getProductQuantityWriter(productId: Int, date: LocalDate): WritableDataFile[ShopQuantity] = {
-        new ProductQuantityFile.Writer(productId, date, ioService)
+    override def getShopQuantityWriter(productId: Int, date: LocalDate): WritableDataFile[ShopQuantity] = {
+        new ShopQuantityFile.Writer(productId, date, ioService)
     }
 
     /** @inheritdoc */
-    override def getInterProductQuantityReader(productId: Int, groupId: Int, date: LocalDate): ReadableDataFile[ShopQuantity] = {
-        new IntermediateProductQuantityFile.Reader(productId, groupId, date, ioService)
+    override def getInterShopQuantityReader(productId: Int, groupId: Int, date: LocalDate): ReadableDataFile[ShopQuantity] = {
+        new IntermediateShopQuantityFile.Reader(productId, groupId, date, ioService)
     }
 
     /** @inheritdoc */
-    override def getInterProductQuantityWriter(productId: Int, groupId: Int, date: LocalDate): WritableDataFile[ShopQuantity] = {
-        new IntermediateProductQuantityFile.Writer(productId, groupId, date, ioService)
+    override def getInterShopQuantityWriter(productId: Int, groupId: Int, date: LocalDate): WritableDataFile[ShopQuantity] = {
+        new IntermediateShopQuantityFile.Writer(productId, groupId, date, ioService)
     }
 
     /** @inheritdoc */
     override def getShopTopSellsReader(shop: UUID, date: LocalDate): ReadableDataFile[ProductQuantity] = {
-        new ShopTopSellsFile.Reader(shop, date, ioService)
+        new ShopTopQuantityFile.Reader(shop, date, ioService)
     }
 
     /** @inheritdoc */
     override def getShopTopSellsWriter(shop: UUID, date: LocalDate): WritableDataFile[ProductQuantity] = {
-        new ShopTopSellsFile.Writer(shop, date, ioService)
+        new ShopTopQuantityFile.Writer(shop, date, ioService)
     }
 
     /** @inheritdoc */
     override def getIntermediateShopTopSellsReader(shop: UUID, group: Int, date: LocalDate): ReadableDataFile[ProductQuantity] = {
-        new IntermediateShopTopSellsFile.Reader(shop, group, date, ioService)
+        new IntermediateShopTopQuantityFile.Reader(shop, group, date, ioService)
     }
 
     /** @inheritdoc */
     override def getIntermediateShopTopSellsWriter(shop: UUID, group: Int, date: LocalDate): WritableDataFile[ProductQuantity] = {
-        new IntermediateShopTopSellsFile.Writer(shop, group, date, ioService)
+        new IntermediateShopTopQuantityFile.Writer(shop, group, date, ioService)
     }
 
     /** @inheritdoc */
 
-    override def getProductPriceReader(shop: UUID, productId: Int, date: LocalDate): ReadableDataFile[Double] = {
-        new ProductPriceFile.Reader(shop, productId, date, ioService)
+    override def getPriceReader(shop: UUID, productId: Int, date: LocalDate): ReadableDataFile[Double] = {
+        new PriceFile.Reader(shop, productId, date, ioService)
     }
 
     /** @inheritdoc */
-    override def getProductPriceWriter(shop: UUID, productId: Int, date: LocalDate): WritableDataFile[Double] = {
-        new ProductPriceFile.Writer(shop, productId, date, ioService)
+    override def getPriceWriter(shop: UUID, productId: Int, date: LocalDate): WritableDataFile[Double] = {
+        new PriceFile.Writer(shop, productId, date, ioService)
     }
 
     /** @inheritdoc */
-    override def getProductRevenueReader(productId: Int, date: LocalDate): ReadableDataFile[ShopRevenue] = {
-        new ProductRevenueFile.Reader(productId, date, ioService)
+    override def getShopRevenueReader(productId: Int, date: LocalDate): ReadableDataFile[ShopRevenue] = {
+        new ShopRevenueFile.Reader(productId, date, ioService)
     }
 
     /** @inheritdoc */
-    override def getProductRevenueWriter(productId: Int, date: LocalDate): WritableDataFile[ShopRevenue] = {
-        new ProductRevenueFile.Writer(productId, date, ioService)
+    override def getShopRevenueWriter(productId: Int, date: LocalDate): WritableDataFile[ShopRevenue] = {
+        new ShopRevenueFile.Writer(productId, date, ioService)
     }
 
     /** @inheritdoc */

@@ -8,13 +8,13 @@ import phenix.io.IOService
 import phenix.models.ShopRevenue
 
 /**
-  * A helper to manage file containing a product revenue for each
-  * shop at a certain day.
-  *
+  * A helper to manage file used to bind shops to revenues for a given product
+  * at a certain day.
   * @param productId The id of the product
   * @param date The date of the DatedDataFile
+  * @param ioService The injected service in charge of IO operations
   */
-class ProductRevenueFile(val productId: Int, date: LocalDate, ioService: IOService)
+class ShopRevenueFile(val productId: Int, date: LocalDate, ioService: IOService)
     extends DataFileImpl[ShopRevenue](date, ioService)
         with LocatedInResult[ShopRevenue] {
 
@@ -32,14 +32,14 @@ class ProductRevenueFile(val productId: Int, date: LocalDate, ioService: IOServi
 }
 
 
-object ProductRevenueFile {
+object ShopRevenueFile {
 
     class Reader(productId: Int, date: LocalDate, ioService: IOService)
-        extends ProductRevenueFile(productId, date, ioService)
+        extends ShopRevenueFile(productId, date, ioService)
             with ReadableDataFileImpl[ShopRevenue]
 
     class Writer(productId: Int, date: LocalDate, ioService: IOService)
-        extends ProductRevenueFile(productId, date, ioService)
+        extends ShopRevenueFile(productId, date, ioService)
             with WritableDataFileImpl[ShopRevenue]
 
 }

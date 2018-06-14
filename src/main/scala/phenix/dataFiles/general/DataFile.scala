@@ -5,6 +5,8 @@ import java.time.LocalDate
 
 /**
   * Represents a file containing a certain type of data.
+  * This trait provide help to store a file into a specific place
+  * on the file system and to write a specific type of data in it.
   */
 trait DataFile[Data] {
 

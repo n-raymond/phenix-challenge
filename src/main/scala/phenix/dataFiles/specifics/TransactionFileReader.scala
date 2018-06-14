@@ -10,13 +10,12 @@ import phenix.models.Transaction
 /**
   * A helper to manage files containing a transactions.
   * @param date The date of the DatedDataFile
+  * @param ioService The injected service in charge of IO operations
   */
 class TransactionFileReader(date: LocalDate, ioService: IOService)
     extends DataFileImpl[Transaction](date, ioService)
         with ReadableDataFileImpl[Transaction]
         with LocatedInDataImpl[Transaction] {
-
-
 
     /** @inheritdoc */
     override def fileNamePrefix: String = "transactions"

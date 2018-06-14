@@ -1,4 +1,4 @@
-package phenix.dataProcessors.productQuantityAggregation
+package phenix.dataProcessors.shopQuantityAggregation
 
 import java.time.LocalDate
 
@@ -12,8 +12,8 @@ import scala.collection.immutable
 import scala.collection.immutable.Map
 import scala.util.{Failure, Success, Try}
 
-class LinearProductQuantityAggregator(dataFileFactory: DataFileService)
-    extends ProductQuantityAggregator
+class LinearShopQuantityAggregator(dataFileFactory: DataFileService)
+    extends ShopQuantityAggregator
         with ResourceCloseable
         with SuccessFilter {
 
@@ -36,7 +36,7 @@ class LinearProductQuantityAggregator(dataFileFactory: DataFileService)
     /* Map */
 
     /**
-      * Divides the given transaction file into several chunks and aggregate them to produce several IntermediateProductQuantityFile.
+      * Divides the given transaction file into several chunks and aggregate them to produce several IntermediateShopQuantityFile.
       *
       * @param transactionFileReader The transaction file that should be processed to do the aggregation
       * @return A map binding the productId with all the intermediate product quantity files related
@@ -49,11 +49,11 @@ class LinearProductQuantityAggregator(dataFileFactory: DataFileService)
         (initialMap /: chunks) {
             case (map, (chunkId, chunk)) =>
                 (map /: aggregateChunk(chunk)) {
-                    case (innerMap, (productId, productQuantities)) =>
-                        tryWith(dataFileFactory.getInterProductQuantityWriter(productId, chunkId, transactionFileReader.date)) {
-                            _.writeData(productQuantities)
+                    case (innerMap, (productId, shopQuantities)) =>
+                        tryWith(dataFileFactory.getInterShopQuantityWriter(productId, chunkId, transactionFileReader.date)) {
+                            _.writeData(shopQuantities)
                         }
-                        val freshReader = dataFileFactory.getInterProductQuantityReader(productId, chunkId, transactionFileReader.date)
+                        val freshReader = dataFileFactory.getInterShopQuantityReader(productId, chunkId, transactionFileReader.date)
 
                         innerMap.get(productId) match {
                             case Some(readers) => innerMap + (productId -> freshReader #:: readers)
@@ -68,7 +68,7 @@ class LinearProductQuantityAggregator(dataFileFactory: DataFileService)
       * the one which came from the same shop.
       *
       * @param chunk A chunk containing some tried transactions
-      * @return A map that binds the productId to an iterable of ProductQuantity
+      * @return A map that binds the productId to an iterable of ShopQuantity
       */
     def aggregateChunk(chunk: Iterable[Try[Transaction]]): Map[Int, Iterable[ShopQuantity]] = {
         filterSuccessValues(chunk) groupBy {
@@ -80,10 +80,10 @@ class LinearProductQuantityAggregator(dataFileFactory: DataFileService)
 
     /**
       * Aggregates each given Transaction that came from the same shop and
-      * add their quantity to produce some ProductQuantities.
+      * add their quantity to produce some ShopQuantities.
       *
       * @param transactions A Stream containing
-      * @return Several ProductQuantities resulting from the aggregation
+      * @return Several ShopQuantities resulting from the aggregation
       */
     def aggregateProductsByShop(transactions: Iterable[Transaction]): Iterable[ShopQuantity] = {
         transactions groupBy {
@@ -121,7 +121,7 @@ class LinearProductQuantityAggregator(dataFileFactory: DataFileService)
             }
         }
 
-        tryWith(dataFileFactory.getProductQuantityWriter(productId, date)) {
+        tryWith(dataFileFactory.getShopQuantityWriter(productId, date)) {
             _.writeData(lines)
         }
     }

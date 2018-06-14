@@ -11,12 +11,13 @@ import phenix.utils.DateSerializer
 
 
 /**
-  * A helper to manage files shop to sells files.
+  * A helper to manage files files of shop top sells .
   *
   * @param shop The id of the shop
   * @param date The date of the DatedDataFile
+  * @param ioService The injected service in charge of IO operations
   */
-class ShopTopSellsFile(val shop: UUID, date: LocalDate, ioService: IOService)
+class ShopTopQuantityFile(val shop: UUID, date: LocalDate, ioService: IOService)
     extends DataFileImpl[ProductQuantity](date, ioService)
         with LocatedInResult[ProductQuantity]
         with DateSerializer {
@@ -35,15 +36,15 @@ class ShopTopSellsFile(val shop: UUID, date: LocalDate, ioService: IOService)
 }
 
 
-object ShopTopSellsFile {
+object ShopTopQuantityFile {
 
     class Reader(shop: UUID, date: LocalDate, ioService: IOService)
-        extends ShopTopSellsFile(shop, date, ioService)
+        extends ShopTopQuantityFile(shop, date, ioService)
             with ReadableDataFileImpl[ProductQuantity]
 
 
     class Writer(shop: UUID, date: LocalDate, ioService: IOService)
-        extends ShopTopSellsFile(shop, date, ioService)
+        extends ShopTopQuantityFile(shop, date, ioService)
             with WritableDataFileImpl[ProductQuantity]
 
 }

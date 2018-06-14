@@ -46,7 +46,7 @@ trait DataFileService {
       * @param date      The date of the file
       * @return          A ReadableDataFile of ShopQuantity
       */
-    def getProductQuantityReader(productId: Int, date: LocalDate): ReadableDataFile[ShopQuantity]
+    def getShopQuantityReader(productId: Int, date: LocalDate): ReadableDataFile[ShopQuantity]
 
     /**
       * A factory generating a writer of a file that binds the shops where a product
@@ -56,7 +56,7 @@ trait DataFileService {
       * @param date      The date of the file
       * @return          A WritableDataFile of ShopQuantity
       */
-    def getProductQuantityWriter(productId: Int, date: LocalDate): WritableDataFile[ShopQuantity]
+    def getShopQuantityWriter(productId: Int, date: LocalDate): WritableDataFile[ShopQuantity]
 
 
     /* Intermediate ProductQuantity */
@@ -70,7 +70,7 @@ trait DataFileService {
       * @param date      The date of the file
       * @return          An intermediate ReadableDataFile of ProductQuantity
       */
-    def getInterProductQuantityReader(productId: Int, groupId: Int, date: LocalDate): ReadableDataFile[ShopQuantity]
+    def getInterShopQuantityReader(productId: Int, groupId: Int, date: LocalDate): ReadableDataFile[ShopQuantity]
 
     /**
       * A factory generating a writer of an intermediate file used in the computing of the final file
@@ -81,7 +81,7 @@ trait DataFileService {
       * @param date      The date of the file
       * @return          A WritableDataFile of ProductQuantity
       */
-    def getInterProductQuantityWriter(productId: Int, groupId: Int, date: LocalDate): WritableDataFile[ShopQuantity]
+    def getInterShopQuantityWriter(productId: Int, groupId: Int, date: LocalDate): WritableDataFile[ShopQuantity]
 
 
     /* ShopTopSellsFile */
@@ -138,7 +138,7 @@ trait DataFileService {
       * @param date The date of the file
       * @return     An intermediate ReadableDataFile of ProductQuantity
       */
-    def getProductPriceReader(shop: UUID, productId: Int, date: LocalDate): ReadableDataFile[Double]
+    def getPriceReader(shop: UUID, productId: Int, date: LocalDate): ReadableDataFile[Double]
 
     /**
       * A factory generating a product price file writer.
@@ -148,7 +148,7 @@ trait DataFileService {
       * @param date The date of the file
       * @return     An intermediate ReadableDataFile of ProductQuantity
       */
-    def getProductPriceWriter(shop: UUID, productId: Int, date: LocalDate): WritableDataFile[Double]
+    def getPriceWriter(shop: UUID, productId: Int, date: LocalDate): WritableDataFile[Double]
 
 
     /* ProductRevenue */
@@ -160,7 +160,7 @@ trait DataFileService {
       * @param date      The date of the file
       * @return          A ReadableDataFile of ProductQuantity
       */
-    def getProductRevenueReader(productId: Int, date: LocalDate): ReadableDataFile[ShopRevenue]
+    def getShopRevenueReader(productId: Int, date: LocalDate): ReadableDataFile[ShopRevenue]
 
     /**
       * A factory generating a WritableDataFile of product revenue.
@@ -169,7 +169,7 @@ trait DataFileService {
       * @param date      The date of the file
       * @return          A WritableDataFile of ProductQuantity
       */
-    def getProductRevenueWriter(productId: Int, date: LocalDate): WritableDataFile[ShopRevenue]
+    def getShopRevenueWriter(productId: Int, date: LocalDate): WritableDataFile[ShopRevenue]
 
 
     /* ShopTopRevenueFile */

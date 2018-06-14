@@ -1,4 +1,4 @@
-package phenix.dataProcessors.topSalesAggregation
+package phenix.dataProcessors.topQuantityAggregation
 import java.time.LocalDate
 import java.util.UUID
 
@@ -50,7 +50,7 @@ class LinearTopSalesAggregator(dataFileService: DataFileService)
         val initialMap = Map[UUID, List[ProductQuantity]]()
 
         val aggregations = (initialMap /: fileGroup) {
-            case (acc, productId) => tryWith(dataFileService.getProductQuantityReader(productId, date)) { file =>
+            case (acc, productId) => tryWith(dataFileService.getShopQuantityReader(productId, date)) { file =>
                 val content = filterSuccessValues(file.getContent)
                 aggregateProductQuantitiesByShop(content, productId, acc)
             }

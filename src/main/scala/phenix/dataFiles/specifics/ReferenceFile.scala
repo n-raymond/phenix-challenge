@@ -16,6 +16,7 @@ import scala.util.matching.Regex
   * A helper to manage files containing a shop reference.
   * @param shop The shop referenced by the file
   * @param date The date of the DatedDataFile
+  * @param ioService The injected service in charge of IO operations
   */
 class ReferenceFile(val shop: UUID, date: LocalDate, ioService: IOService)
     extends DataFileImpl[ProductPrice](date, ioService)

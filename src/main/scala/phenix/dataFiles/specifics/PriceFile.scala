@@ -12,8 +12,9 @@ import phenix.io.IOService
   *
   * @param productId The id of the product
   * @param date The date of the DatedDataFile
+  * @param ioService The injected service in charge of IO operations
   */
-class ProductPriceFile(val shop: UUID, val productId: Int, date: LocalDate, ioService: IOService)
+class PriceFile(val shop: UUID, val productId: Int, date: LocalDate, ioService: IOService)
     extends DataFileImpl[Double](date, ioService)
         with LocatedInResult[Double] {
 
@@ -31,14 +32,14 @@ class ProductPriceFile(val shop: UUID, val productId: Int, date: LocalDate, ioSe
 }
 
 
-object ProductPriceFile {
+object PriceFile {
 
     class Reader(shop: UUID, productId: Int, date: LocalDate, ioService: IOService)
-        extends ProductPriceFile(shop, productId, date, ioService)
+        extends PriceFile(shop, productId, date, ioService)
             with ReadableDataFileImpl[Double]
 
     class Writer(shop: UUID, productId: Int, date: LocalDate, ioService: IOService)
-        extends ProductPriceFile(shop, productId, date, ioService)
+        extends PriceFile(shop, productId, date, ioService)
             with WritableDataFileImpl[Double]
 
 }

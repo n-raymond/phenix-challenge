@@ -1,4 +1,4 @@
-package phenix.dataProcessors.topSalesAggregation
+package phenix.dataProcessors.topQuantityAggregation
 
 
 import java.time.LocalDate

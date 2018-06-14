@@ -22,7 +22,7 @@ class ShopQuantityFileSpec extends FlatSpec with Matchers with MockFactory {
     private val fileName = s"${conf.getString("paths.result")}/product_quantity/product_qty_37_20150514.data"
 
     "fileName" should "return a valid file name" in {
-        val file = new ProductQuantityFile(37, LocalDate.of(2015, 5, 14), ioService)
+        val file = new ShopQuantityFile(37, LocalDate.of(2015, 5, 14), ioService)
 
         file.fileName should equal (fileName)
     }
@@ -39,7 +39,7 @@ class ShopQuantityFileSpec extends FlatSpec with Matchers with MockFactory {
         ioService.getFileReader _ when fileName returns fileReader
         fileReader.readLines _ when() returns fileData
 
-        val file = new ProductQuantityFile.Reader(37, LocalDate.of(2015, 5, 14), ioService)
+        val file = new ShopQuantityFile.Reader(37, LocalDate.of(2015, 5, 14), ioService)
 
 
         val result = Iterable(
@@ -63,7 +63,7 @@ class ShopQuantityFileSpec extends FlatSpec with Matchers with MockFactory {
         ioService.getFileWriter _ when fileName returns fileWriter
         fileWriter.writeLines _ expects expected
 
-        val file = new ProductQuantityFile.Writer(37, LocalDate.of(2015, 5, 14), ioService)
+        val file = new ShopQuantityFile.Writer(37, LocalDate.of(2015, 5, 14), ioService)
 
         val data = Iterable(
             ShopQuantity(UUID.fromString("72a2876c-bc8b-4f35-8882-8d661fac2606"), 652),
@@ -76,7 +76,7 @@ class ShopQuantityFileSpec extends FlatSpec with Matchers with MockFactory {
 
 
     "serialiseData" should "well serialize a ProductQuantity" in {
-        val file = new ProductQuantityFile(1, LocalDate.of(2015, 5, 14), ioService)
+        val file = new ShopQuantityFile(1, LocalDate.of(2015, 5, 14), ioService)
         val result = file.serializeData(ShopQuantity(UUID.fromString("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71"), 531))
 
         result should equal ("2a4b6b81-5aa2-4ad8-8ba9-ae1a006e7d71|531")

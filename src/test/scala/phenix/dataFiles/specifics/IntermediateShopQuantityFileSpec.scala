@@ -23,7 +23,7 @@ class IntermediateShopQuantityFileSpec extends FlatSpec with Matchers with MockF
 
 
     "fileName" should "return a valid file name" in {
-        val file = new IntermediateProductQuantityFile(37, 14, LocalDate.of(2015, 5, 14), ioService)
+        val file = new IntermediateShopQuantityFile(37, 14, LocalDate.of(2015, 5, 14), ioService)
 
         file.fileName should equal (fileName)
     }
@@ -40,7 +40,7 @@ class IntermediateShopQuantityFileSpec extends FlatSpec with Matchers with MockF
         ioService.getFileReader _ when fileName returns fileReader
         fileReader.readLines _ when() returns fileData
 
-        val file = new IntermediateProductQuantityFile.Reader(37, 14, LocalDate.of(2015, 5, 14), ioService)
+        val file = new IntermediateShopQuantityFile.Reader(37, 14, LocalDate.of(2015, 5, 14), ioService)
 
         val result = Iterable(
             Success(ShopQuantity(UUID.fromString("72a2876c-bc8b-4f35-8882-8d661fac2606"), 652)),
@@ -63,7 +63,7 @@ class IntermediateShopQuantityFileSpec extends FlatSpec with Matchers with MockF
         ioService.getFileWriter _ when fileName returns fileWriter
         fileWriter.writeLines _ expects expected
 
-        val file = new IntermediateProductQuantityFile.Writer(37, 14, LocalDate.of(2015, 5, 14), ioService)
+        val file = new IntermediateShopQuantityFile.Writer(37, 14, LocalDate.of(2015, 5, 14), ioService)
 
 
         val data = Iterable(

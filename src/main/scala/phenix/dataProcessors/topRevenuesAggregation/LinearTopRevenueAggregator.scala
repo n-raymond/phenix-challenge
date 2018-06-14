@@ -50,7 +50,7 @@ class LinearTopRevenueAggregator(dataFileService: DataFileService)
         val initialMap = Map[UUID, List[ProductRevenue]]()
 
         val aggregations = (initialMap /: fileGroup) {
-            case (acc, productId) => tryWith(dataFileService.getProductRevenueReader(productId, date)) { file =>
+            case (acc, productId) => tryWith(dataFileService.getShopRevenueReader(productId, date)) { file =>
                 val content = filterSuccessValues(file.getContent)
                 aggregateProductQuantitiesByShop(content, productId, acc)
             }

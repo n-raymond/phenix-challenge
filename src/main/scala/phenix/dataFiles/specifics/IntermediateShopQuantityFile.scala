@@ -13,9 +13,10 @@ import phenix.models.ShopQuantity
   *
   * @param productId The id of the product
   * @param date      The date of the DatedDataFile
+  * @param ioService The injected service in charge of IO operations
   */
-class IntermediateProductQuantityFile(productId: Int, val groupId: Int, date: LocalDate, ioService: IOService)
-    extends ProductQuantityFile(productId, date, ioService) {
+class IntermediateShopQuantityFile(productId: Int, val groupId: Int, date: LocalDate, ioService: IOService)
+    extends ShopQuantityFile(productId, date, ioService) {
 
     /** @inheritdoc*/
     override def fileNamePrefix: String = s"intermediate_product_qty_${productId}_$groupId"
@@ -25,15 +26,15 @@ class IntermediateProductQuantityFile(productId: Int, val groupId: Int, date: Lo
 
 }
 
-object IntermediateProductQuantityFile {
+object IntermediateShopQuantityFile {
 
     class Reader(productId: Int, groupId: Int, date: LocalDate, ioService: IOService)
-        extends IntermediateProductQuantityFile(productId, groupId, date, ioService)
+        extends IntermediateShopQuantityFile(productId, groupId, date, ioService)
             with ReadableDataFileImpl[ShopQuantity]
 
 
     class Writer(productId: Int, groupId: Int, date: LocalDate, ioService: IOService)
-        extends IntermediateProductQuantityFile(productId, groupId, date, ioService)
+        extends IntermediateShopQuantityFile(productId, groupId, date, ioService)
             with WritableDataFileImpl[ShopQuantity]
 
 }

@@ -3,10 +3,10 @@ package phenix.app
 import java.time.LocalDate
 
 import phenix.dataFiles.DataFileServiceImpl
-import phenix.dataProcessors.productQuantityAggregation.LinearProductQuantityAggregator
-import phenix.dataProcessors.productRevenueAggregation.LinearProductRevenueAggregator
+import phenix.dataProcessors.shopQuantityAggregation.LinearShopQuantityAggregator
+import phenix.dataProcessors.shopRevenueAggregation.LinearShopRevenueAggregator
 import phenix.dataProcessors.topRevenuesAggregation.LinearTopRevenueAggregator
-import phenix.dataProcessors.topSalesAggregation.LinearTopSalesAggregator
+import phenix.dataProcessors.topQuantityAggregation.LinearTopSalesAggregator
 import phenix.io.IOServiceImpl
 import phenix.utils.ResourceCloseable
 
@@ -15,8 +15,8 @@ object PhenixApp extends App with ResourceCloseable {
     /* Dependency Injection */
     val ioService = new IOServiceImpl
     val dataFileFactory = new DataFileServiceImpl(ioService)
-    val productQuantityAggregator = new LinearProductQuantityAggregator(dataFileFactory)
-    val productRevenueAggregator = new LinearProductRevenueAggregator(dataFileFactory, ioService)
+    val productQuantityAggregator = new LinearShopQuantityAggregator(dataFileFactory)
+    val productRevenueAggregator = new LinearShopRevenueAggregator(dataFileFactory, ioService)
     val topSalesAggregator = new LinearTopSalesAggregator(dataFileFactory)
     val topRevenuesAggregator = new LinearTopRevenueAggregator(dataFileFactory)
 

@@ -1,4 +1,4 @@
-package phenix.dataProcessors.productRevenueAggregation
+package phenix.dataProcessors.shopRevenueAggregation
 import java.time.LocalDate
 import java.util.UUID
 
@@ -10,8 +10,8 @@ import phenix.io.IOService
 import phenix.models.{ShopQuantity, ShopRevenue}
 import phenix.utils.{ResourceCloseable, SuccessFilter}
 
-class LinearProductRevenueAggregator(dataFileService: DataFileService, ioService: IOService)
-    extends ProductRevenueAggregator
+class LinearShopRevenueAggregator(dataFileService: DataFileService, ioService: IOService)
+    extends ShopRevenueAggregator
         with ResourceCloseable
         with SuccessFilter {
 
@@ -24,30 +24,50 @@ class LinearProductRevenueAggregator(dataFileService: DataFileService, ioService
         createProductPriceFiles()
 
         productIds map { productId =>
-            tryWith(dataFileService.getProductQuantityReader(productId, date)) { reader =>
+            tryWith(dataFileService.getShopQuantityReader(productId, date)) { reader =>
                 val content = filterSuccessValues(reader.getContent)
                 val revenues = computeRevenues(content, productId, date)
-                tryWith(dataFileService.getProductRevenueWriter(productId, date)) {
+                tryWith(dataFileService.getShopRevenueWriter(productId, date)) {
                     _.writeData(revenues)
                 }
-                (productId, dataFileService.getProductRevenueReader(productId, date))
+                (productId, dataFileService.getShopRevenueReader(productId, date))
             }
         }
     }
 
-    def computeRevenues(productQties: Iterable[ShopQuantity], productId: Int, date: LocalDate): Iterable[ShopRevenue] = {
-        productQties map { case ShopQuantity(shop, qty) =>
+    /**
+      * Computes for each product the revenues of a shop.
+      * It will use the bindings of (shop, quantity) that was already computed to multiply the quantity
+      * with the price of the product.
+      * @param shopQuantities The files containing bindings of (shop, quantity) for a product
+      * @param productId The product in question
+      * @param date The date of the transactions
+      * @return An iterable containing the resulting shop revenues for the product
+      */
+    def computeRevenues(shopQuantities: Iterable[ShopQuantity], productId: Int, date: LocalDate): Iterable[ShopRevenue] = {
+        shopQuantities map { case ShopQuantity(shop, qty) =>
             val price = getProductPrice(shop, productId, date)
             new ShopRevenue(shop, price * qty)
         }
     }
 
+    /**
+      * Retrieve the price of a certain product in a given shop on a given date.
+      * @param shop The shop in which the product was sold
+      * @param productId The product that was sold
+      * @param date The date of the sold
+      * @return The price of this product
+      */
     def getProductPrice(shop: UUID, productId: Int, date: LocalDate): Double = {
-        tryWith(dataFileService.getProductPriceReader(shop, productId, date)) { reader =>
+        tryWith(dataFileService.getPriceReader(shop, productId, date)) { reader =>
             filterSuccessValues(reader.getContent).head
         }
     }
 
+    /**
+      * Reads all the shop reference files and explodes them to store the price
+      * of each product for each shop in a single file.
+      */
     def createProductPriceFiles()= {
         val dataDirectoryName = conf.getString("paths.data")
         val referenceNames = ioService.findFilesNameByRegex(dataDirectoryName, ReferenceFile.fileNameRegex)
@@ -60,7 +80,7 @@ class LinearProductRevenueAggregator(dataFileService: DataFileService, ioService
             tryWith(dataFileService.getReferenceReader(shop, date)) { reader =>
                 val content = filterSuccessValues(reader.getContent)
                 content foreach { productValue =>
-                    tryWith(dataFileService.getProductPriceWriter(shop, productValue.product, date)) {
+                    tryWith(dataFileService.getPriceWriter(shop, productValue.product, date)) {
                         _.writeData(Iterable(productValue.price))
                     }
                 }
