@@ -19,18 +19,18 @@ The solution files will be located in :
 * `<root_path>/result/top_100_ventes`
 
 
-#### Run it with SBT
+### Run it with SBT
 
 Use the following command :
 ```
 sbt "run <root_path>"
 ```
 
-where `<root_path>` is the path of thr `root` directory.
+where `<root_path>` is the path of the `root` directory.
 
-#### Package and run the app
+### Package and run the app
 
-###### Packaging
+#### Packaging
 
 To package the application use following command:
 ```
@@ -39,7 +39,7 @@ sbt dist
 
 This will create a zip file at path `target/universal/phenix-challenge<version>.zip`.
 
-###### Running the app from the zip
+#### Running the app from the zip
 
 Unzip the zip archive. It will give you a folder named `phenix-challenge<version>`.
 
@@ -50,7 +50,7 @@ phenix-challenge<version>/bin/phenix-challenge <root_path>
 
 ## Presentation of the solution
 
-#### Patterns and algorithms
+### Patterns and algorithms
 
 * The main idea of the solution was to use some MapReduce algorithms to divide the work
 between several workers (2 in this case because we only have two core in our processor)
@@ -74,7 +74,7 @@ adapter pattern to handle IO operations. This was very helpful to mock those ope
 * To avoid a leak on file descriptors, I handle file closing in a functional way to imitate Java Try with
 resources (see trait ResourceCloseable).
 
-#### Program architecture
+### Program architecture
 
 The program is divided into several packages :
 * **app:** Contains the entry point of the program. In charge of command line handling, compile time 
@@ -85,7 +85,7 @@ dependency injection and aggregation launching.
 * **dataProcessors:** Contains the aggregation algorithms using a MapReduce approach. 
 * **utils:** Some useful helpers.
 
-#### Difficulties encountered
+### Difficulties encountered
 
 * The given data set contains an error : The transactions file references a product with id 0 but this
 product is never referenced inside shop reference files. It was important to me that te program was
