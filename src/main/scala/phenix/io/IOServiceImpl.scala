@@ -11,7 +11,7 @@ import scala.util.matching.Regex
 /**
   * The default implementation of IOService.
   */
-class IOServiceImpl extends IOService {
+class IOServiceImpl(override val rootPath: String) extends IOService {
 
     /** @inheritdoc */
     override def getFileReader(fileName: String) : FileReader = new BufferedSourceAdapter(fileName)

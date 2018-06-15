@@ -13,6 +13,11 @@ import scala.util.matching.Regex
   */
 trait IOService {
 
+    /**
+      * Corresponds to the root path of the directory containing the folder data.
+      */
+    val rootPath : String
+
     /* IO Adapters */
 
     /**

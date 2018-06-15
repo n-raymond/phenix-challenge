@@ -48,7 +48,7 @@ object DataFileImpl {
     trait LocatedInDataImpl[Data] extends DataFileImpl[Data] {
 
         /** @inheritdoc */
-        override def fileLocation : String = DataFileImpl.conf.getString("paths.data")
+        override def fileLocation : String = s"${ioService.rootPath}/${DataFileImpl.conf.getString("paths.data")}"
     }
 
     /**
@@ -57,7 +57,7 @@ object DataFileImpl {
     trait LocatedInResult[Data] extends DataFileImpl[Data] {
 
         /** @inheritdoc */
-        override def fileLocation : String = DataFileImpl.conf.getString("paths.result")
+        override def fileLocation : String = s"${ioService.rootPath}/${DataFileImpl.conf.getString("paths.result")}"
     }
 
 
