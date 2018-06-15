@@ -3,19 +3,20 @@ package phenix.dataProcessors.shopQuantityAggregation
 import java.time.LocalDate
 
 import com.typesafe.config.ConfigFactory
+import com.typesafe.scalalogging.LazyLogging
 import phenix.dataFiles.DataFileService
 import phenix.dataFiles.general.ReadableDataFile
 import phenix.models.{ShopQuantity, Transaction}
 import phenix.utils.{ResourceCloseable, SuccessFilter}
 
-import scala.collection.immutable
 import scala.collection.immutable.Map
 import scala.util.{Failure, Success, Try}
 
 class LinearShopQuantityAggregator(dataFileFactory: DataFileService)
     extends ShopQuantityAggregator
         with ResourceCloseable
-        with SuccessFilter {
+        with SuccessFilter
+        with LazyLogging {
 
     private val conf = ConfigFactory.load()
 
@@ -30,6 +31,9 @@ class LinearShopQuantityAggregator(dataFileFactory: DataFileService)
                 reducer(productId, readers, transactionFileReader.date)
                 productId
             }
+        } { e =>
+            logger.error(s"Critical: Can not write on Transaction file", e)
+            throw e
         }
     }
 
@@ -50,9 +54,13 @@ class LinearShopQuantityAggregator(dataFileFactory: DataFileService)
             case (map, (chunkId, chunk)) =>
                 (map /: aggregateChunk(chunk)) {
                     case (innerMap, (productId, shopQuantities)) =>
+
                         tryWith(dataFileFactory.getInterShopQuantityWriter(productId, chunkId, transactionFileReader.date)) {
                             _.writeData(shopQuantities)
+                        } {
+                           logger.error(s"Can not write on ShopQuantity file with id: $productId", _)
                         }
+
                         val freshReader = dataFileFactory.getInterShopQuantityReader(productId, chunkId, transactionFileReader.date)
 
                         innerMap.get(productId) match {
@@ -119,10 +127,15 @@ class LinearShopQuantityAggregator(dataFileFactory: DataFileService)
                 case (shopId, quantities) =>
                     ShopQuantity(shopId, (0 /: quantities)  (_ + _.quantity))
             }
+        } { e =>
+            logger.error(s"Can not write on ShopQuantity file with id: $productId", e)
+            throw e
         }
 
         tryWith(dataFileFactory.getShopQuantityWriter(productId, date)) {
             _.writeData(lines)
+        } {
+            logger.error(s"Can not write on ShopQuantity file with id: $productId", _)
         }
     }
 

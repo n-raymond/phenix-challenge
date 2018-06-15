@@ -1,8 +1,10 @@
 package phenix.dataProcessors.shopRevenueAggregation
+import java.io.IOException
 import java.time.LocalDate
 import java.util.UUID
 
 import com.typesafe.config.ConfigFactory
+import com.typesafe.scalalogging.LazyLogging
 import phenix.dataFiles.DataFileService
 import phenix.dataFiles.general.ReadableDataFile
 import phenix.dataFiles.specifics.ReferenceFile
@@ -13,7 +15,8 @@ import phenix.utils.{ResourceCloseable, SuccessFilter}
 class LinearShopRevenueAggregator(dataFileService: DataFileService, ioService: IOService)
     extends ShopRevenueAggregator
         with ResourceCloseable
-        with SuccessFilter {
+        with SuccessFilter
+        with LazyLogging {
 
     /**
       * The application configuration
@@ -27,10 +30,17 @@ class LinearShopRevenueAggregator(dataFileService: DataFileService, ioService: I
             tryWith(dataFileService.getShopQuantityReader(productId, date)) { reader =>
                 val content = filterSuccessValues(reader.getContent)
                 val revenues = computeRevenues(content, productId, date)
+
                 tryWith(dataFileService.getShopRevenueWriter(productId, date)) {
                     _.writeData(revenues)
+                } {
+                    logger.error(s"Can not write on ShopRevenue file with id: $productId", _)
                 }
+
                 (productId, dataFileService.getShopRevenueReader(productId, date))
+            } { e =>
+                logger.error(s"Can not read a ShopQuantity file with id: $productId", e)
+                throw e
             }
         }
     }
@@ -46,8 +56,12 @@ class LinearShopRevenueAggregator(dataFileService: DataFileService, ioService: I
       */
     def computeRevenues(shopQuantities: Iterable[ShopQuantity], productId: Int, date: LocalDate): Iterable[ShopRevenue] = {
         shopQuantities map { case ShopQuantity(shop, qty) =>
-            val price = getProductPrice(shop, productId, date)
-            new ShopRevenue(shop, price * qty)
+            try {
+                val price = getProductPrice(shop, productId, date)
+                new ShopRevenue(shop, price * qty)
+            } catch {
+                case _: IOException => new ShopRevenue(shop, 0.0)
+            }
         }
     }
 
@@ -61,6 +75,9 @@ class LinearShopRevenueAggregator(dataFileService: DataFileService, ioService: I
     def getProductPrice(shop: UUID, productId: Int, date: LocalDate): Double = {
         tryWith(dataFileService.getPriceReader(shop, productId, date)) { reader =>
             filterSuccessValues(reader.getContent).head
+        } { e =>
+            logger.error(s"Can not write a price file", e)
+            throw e
         }
     }
 
@@ -80,10 +97,16 @@ class LinearShopRevenueAggregator(dataFileService: DataFileService, ioService: I
             tryWith(dataFileService.getReferenceReader(shop, date)) { reader =>
                 val content = filterSuccessValues(reader.getContent)
                 content foreach { productValue =>
+
                     tryWith(dataFileService.getPriceWriter(shop, productValue.product, date)) {
                         _.writeData(Iterable(productValue.price))
+                    } {
+                        logger.error(s"Can not write a price file with id: ${productValue.product} with shop: $shop", _)
                     }
                 }
+            } { e =>
+                logger.error(s"Critical : Can not read a reference file", e)
+                throw e
             }
         }
     }

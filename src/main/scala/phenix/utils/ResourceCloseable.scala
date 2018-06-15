@@ -1,5 +1,9 @@
 package phenix.utils
 
+import java.io.IOException
+
+import scala.util.{Failure, Success, Try}
+
 /**
   * Used to add functionality of closing automatically
   * AutoCloseable objects.
@@ -15,12 +19,20 @@ trait ResourceCloseable {
       * @tparam B The type of return of the f function
       * @return An element of type B
       */
-    def tryWith[A <: AutoCloseable, B](closeable: A)(f: A => B) : B = {
-        try { f(closeable) } finally { closeable.close() }
+    def tryWith[A <: AutoCloseable, B](closeable: A)(f: A => B)(ex: IOException => B) : B = {
+        try {
+            f(closeable)
+        } catch {
+            case e: IOException => ex(e)
+        } finally { closeable.close() }
     }
 
-    def tryWith[A <: AutoCloseable, B](closeables: Iterable[A])(f: Iterable[A] => B) : B = {
-        try { f(closeables) } finally { closeables foreach (_.close())}
+    def tryWith[A <: AutoCloseable, B](closeables: Iterable[A])(f: Iterable[A] => B)(ex: IOException => B) : B = {
+        try {
+            f(closeables)
+        } catch {
+            case e: IOException => ex(e)
+        } finally { closeables foreach (_.close())}
     }
 
 }

@@ -4,6 +4,7 @@ import java.time.LocalDate
 import java.util.UUID
 
 import com.typesafe.config.ConfigFactory
+import com.typesafe.scalalogging.LazyLogging
 import phenix.dataFiles.DataFileService
 import phenix.dataFiles.general.ReadableDataFile
 import phenix.models.{ProductPrice, ProductRevenue, ShopRevenue}
@@ -12,7 +13,8 @@ import phenix.utils.{ResourceCloseable, SuccessFilter}
 class LinearTopRevenueAggregator(dataFileService: DataFileService)
     extends TopRevenueAggregator
         with ResourceCloseable
-        with SuccessFilter {
+        with SuccessFilter
+        with LazyLogging {
 
     private val conf = ConfigFactory.load()
 
@@ -53,6 +55,9 @@ class LinearTopRevenueAggregator(dataFileService: DataFileService)
             case (acc, productId) => tryWith(dataFileService.getShopRevenueReader(productId, date)) { file =>
                 val content = filterSuccessValues(file.getContent)
                 aggregateProductQuantitiesByShop(content, productId, acc)
+            } { e =>
+                logger.error(s"Critical: Can not read a ShopRevenue file of product: $productId", e)
+                throw e
             }
         }
 
@@ -61,6 +66,8 @@ class LinearTopRevenueAggregator(dataFileService: DataFileService)
 
             tryWith(dataFileService.getIntermediateShopTopRevenueWriter(shop, groupId, date)) {
                 _.writeData(sorted)
+            } {
+                logger.error(s"Can not read a ShopTopRevenue file of shop: $shop and group: $groupId", _)
             }
 
             (shop, dataFileService.getIntermediateShopTopRevenueReader(shop, groupId, date))
@@ -96,12 +103,20 @@ class LinearTopRevenueAggregator(dataFileService: DataFileService)
         merged map { case (uuid, files) =>
             val data = files.flatMap {
                 case (_, reader) =>
-                    tryWith(reader) { _.getContent.toList }
+                    tryWith(reader) { _.getContent.toList } { e =>
+                        logger.error(s"Critical: Can not read a ProductRevenue file", e)
+                        throw e
+                    }
             }
             val processedData = retrieveTop100(filterSuccessValues(data))
+
             tryWith(dataFileService.getShopTopRevenueWriter(uuid, date)) {
                 _.writeData(processedData)
+            } {
+                logger.error(s"Can not write a ShopTopRevenue file of shop: $uuid", _)
             }
+
+
             (uuid, dataFileService.getShopTopRevenueReader(uuid, date))
         }
     }
