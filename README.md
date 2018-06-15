@@ -96,7 +96,7 @@ issues in regard of thread safety. Unfortunately, write and read files causes si
 To avoid the problem, the idea was to work on very distinct files inside map operations and then
 try to aggregate the different groups of resulting files into one solution in the reduce operation.
 
-#### Possible Improvements
+### Possible Improvements
 
 * This is a partial solution. Only two indicators were treated :
     - top_100_ventes_<MAGASIN_ID>_YYYYMMDD.data
